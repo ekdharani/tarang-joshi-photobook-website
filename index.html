@@ -31,9 +31,7 @@
             --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
             --transition-fast: 0.18s ease-out;
             --transition-smooth: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-            --transition-cinematic: 0.55s cubic-bezier(0.16, 0.84, 0.44, 1);
-            --max-width: 1100px;
-            --flipbook-perspective: 1800px;
+            --flip-duration: 0.55s;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -77,7 +75,6 @@
             display: flex;
             flex-direction: column;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             transition: background var(--transition-smooth), color var(--transition-smooth);
             overflow-x: hidden;
         }
@@ -92,33 +89,25 @@
         h2 {font-size: clamp(1.25rem, 3vw, 1.8rem);}
         h3 {font-size: clamp(1rem, 2.2vw, 1.3rem);}
         p {font-size: 0.95rem; color: var(--text-secondary);}
-        .text-muted {color: var(--text-muted); font-size: 0.85rem;}
 
         .container {
             width: 100%;
-            max-width: var(--max-width);
+            max-width: 1100px;
             margin: 0 auto;
             padding: 0 clamp(12px, 3vw, 28px);
         }
 
+        /* Hero */
         .hero {
             position: relative;
             width: 100%;
             min-height: 55vh;
-            min-height: 55dvh;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            background: linear-gradient(160deg, #1c1c1a 0%, #2a2a26 30%, #3a3a34 60%, #1c1c1a 100%);
+            background: linear-gradient(160deg, #1c1c1a, #2a2a26);
             overflow: hidden;
             padding: 2rem 1rem 3rem;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.04) 0%, transparent 70%);
-            pointer-events: none;
         }
         .hero-content {
             position: relative;
@@ -133,141 +122,57 @@
         }
         .hero-content .subtitle {
             color: #c5c5be;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            font-weight: 300;
-            font-family: var(--font-serif);
             font-style: italic;
-        }
-        .hero-content .byline {
-            color: #999990;
-            font-size: 0.85rem;
-            margin-top: 0.6rem;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            font-family: var(--font-serif);
         }
         .hero-placeholder {
             position: absolute;
             inset: 0;
-            z-index: 0;
-            opacity: 0.25;
-            background:
-                radial-gradient(circle at 30% 40%, rgba(180,170,150,0.5) 0%, transparent 50%),
-                radial-gradient(circle at 70% 55%, rgba(160,150,130,0.35) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(200,190,170,0.3) 0%, transparent 45%);
-            filter: blur(3px);
+            opacity: 0.2;
+            background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.08), transparent);
+            pointer-events: none;
         }
 
-        .section {
-            padding: 2.5rem 0;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .section-header h2 {margin-bottom: 0.3rem;}
-        .section-header .section-rule {
-            display: block;
-            width: 50px;
-            height: 2px;
-            background: var(--border);
-            margin: 0.8rem auto 0;
-            border-radius: 1px;
-        }
-
+        .section {padding: 2.5rem 0;}
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
             gap: clamp(16px, 3vw, 28px);
             align-items: start;
         }
         .product-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
+            border-radius: 16px;
             box-shadow: var(--shadow-sm);
-            transition: box-shadow var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-smooth);
+            transition: all 0.35s;
             display: flex;
             flex-direction: column;
-            height: 100%;
         }
         .product-card:hover {
             box-shadow: var(--shadow-md);
             transform: translateY(-3px);
-            border-color: #ccc;
         }
-        @media (prefers-color-scheme: dark) {.product-card:hover {border-color: #444;}}
         .product-card__thumb-wrap {
             position: relative;
-            width: 100%;
             aspect-ratio: 4/3;
             overflow: hidden;
-            background: #e8e8e3;
             cursor: pointer;
-            flex-shrink: 0;
+            background: #e8e8e3;
         }
-        @media (prefers-color-scheme: dark) {.product-card__thumb-wrap {background: #20201e;}}
         .product-card__thumb-wrap img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
-            transition: transform var(--transition-cinematic);
-            will-change: transform;
+            transition: transform 0.55s;
         }
         .product-card__thumb-wrap:hover img {transform: scale(1.04);}
-        .product-card__thumb-wrap .thumb-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.0);
-            transition: background var(--transition-smooth);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-        }
-        .product-card__thumb-wrap:hover .thumb-overlay {background: rgba(0,0,0,0.18);}
-        .thumb-overlay-icon {
-            opacity: 0;
-            transform: translateY(8px);
-            transition: opacity var(--transition-smooth), transform var(--transition-smooth);
-            color: #fff;
-            font-size: 2.2rem;
-            pointer-events: none;
-        }
-        .product-card__thumb-wrap:hover .thumb-overlay-icon {
-            opacity: 1;
-            transform: translateY(0);
-        }
         .product-card__body {
             padding: 1.1rem 1.2rem 1.3rem;
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
             gap: 0.5rem;
-        }
-        .product-card__body h3 {
-            font-family: var(--font-serif);
-            font-size: 1.15rem;
-            margin: 0;
-        }
-        .product-card__body .book-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .product-card__body p {
-            font-size: 0.88rem;
-            color: var(--text-secondary);
             flex-grow: 1;
-            margin: 0;
-        }
-        .product-card__actions {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-            margin-top: 0.4rem;
         }
         .btn {
             display: inline-flex;
@@ -281,866 +186,689 @@
             border: 1.5px solid transparent;
             cursor: pointer;
             text-decoration: none;
-            font-family: var(--font-sans);
-            transition: all var(--transition-fast);
+            transition: all 0.18s;
             white-space: nowrap;
-            letter-spacing: 0.01em;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
-        .btn-primary {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            border-color: var(--accent-hover);
-            box-shadow: var(--shadow-sm);
-        }
-        .btn-outline {
-            background: transparent;
-            color: var(--accent);
-            border-color: var(--border);
-        }
-        .btn-outline:hover {
-            border-color: var(--accent);
-            background: rgba(0,0,0,0.03);
-        }
-        @media (prefers-color-scheme: dark) {
-            .btn-outline:hover {background: rgba(255,255,255,0.04);}
-            .btn-primary {background: #e8e8e6; color: #1a1a1a; border-color: #e8e8e6;}
-            .btn-primary:hover {background: #fff; border-color: #fff;}
-        }
-        .btn-whatsapp {
-            background: #25D366;
-            color: #fff;
-            border-color: #25D366;
-        }
-        .btn-whatsapp:hover {
-            background: #1fb855;
-            border-color: #1fb855;
-            box-shadow: 0 2px 10px rgba(37,211,102,0.3);
-        }
-        .btn-donate {
-            background: #b88a3a;
-            color: #fff;
-            border-color: #b88a3a;
-        }
-        .btn-donate:hover {
-            background: #9e7230;
-            border-color: #9e7230;
-        }
-        .btn-sm {
-            padding: 0.45rem 0.85rem;
-            font-size: 0.8rem;
-            border-radius: 40px;
-        }
+        .btn-primary {background: #1a1a1a; color: #fff; border-color: #1a1a1a;}
+        .btn-primary:hover {background: #333;}
+        .btn-outline {background: transparent; color: currentColor; border-color: #ccc;}
+        .btn-outline:hover {border-color: #1a1a1a; background: rgba(0,0,0,0.03);}
+        .btn-whatsapp {background: #25D366; color: #fff; border-color: #25D366;}
+        .btn-whatsapp:hover {background: #1fb855;}
+        .btn-donate {background: #b88a3a; color: #fff; border-color: #b88a3a;}
+        .btn-donate:hover {background: #9e7230;}
+        .btn-sm {padding: 0.45rem 0.85rem; font-size: 0.8rem;}
 
-        .placeholder-section {
-            background: var(--surface);
-            border: 1.5px dashed var(--border);
-            border-radius: var(--radius-lg);
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-            color: var(--text-muted);
-            transition: all var(--transition-smooth);
-        }
-        .placeholder-section h3 {color: var(--text-secondary); margin-bottom: 0.4rem;}
-        .placeholder-section .icon-placeholder {font-size: 2.5rem; display: block; margin-bottom: 0.6rem; opacity: 0.5;}
+        .product-card__actions {display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.4rem;}
 
-        .site-footer {
-            margin-top: auto;
-            padding: 1.8rem 0;
-            text-align: center;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-        .site-footer a {color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px;}
-
-        /* ── MODALS ── */
+        /* MODALS */
         .modal-backdrop {
             position: fixed;
             inset: 0;
             z-index: 1000;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity var(--transition-cinematic);
-            -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
-            padding: 12px;
+            transition: opacity 0.4s;
+            backdrop-filter: blur(6px);
         }
-        .modal-backdrop.active {opacity: 1; pointer-events: auto;}
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
         .modal-panel {
             background: var(--surface);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             width: 100%;
             max-width: 520px;
             max-height: 90vh;
-            max-height: 90dvh;
             overflow-y: auto;
             position: relative;
-            transform: translateY(25px) scale(0.96);
-            transition: transform var(--transition-cinematic);
-            display: flex;
-            flex-direction: column;
+            transform: translateY(30px);
+            transition: transform 0.4s;
         }
-        .modal-backdrop.active .modal-panel {transform: translateY(0) scale(1);}
+        .modal-backdrop.active .modal-panel {transform: translateY(0);}
         .modal-panel.flipbook-panel {
             max-width: 95vw;
-            max-width: 95dvw;
             width: 100%;
-            max-height: 94vh;
-            max-height: 94dvh;
-            border-radius: var(--radius);
+            height: 90vh;
+            max-height: 96vh;
+            border-radius: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: #0f0f0e;
+        }
+        @media (max-width: 768px) {
+            .modal-panel.flipbook-panel {
+                height: 100dvh;
+                width: 100vw;
+                max-width: 100vw;
+                max-height: 100dvh;
+                border-radius: 0;
+            }
         }
         .modal-close {
             position: absolute;
-            top: 10px;
-            right: 14px;
-            z-index: 20;
-            width: 36px;
-            height: 36px;
+            top: 12px;
+            right: 16px;
+            z-index: 30;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: none;
-            background: rgba(0,0,0,0.5);
+            background: rgba(255,255,255,0.15);
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             cursor: pointer;
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all var(--transition-fast);
-            -webkit-tap-highlight-color: transparent;
         }
-        .modal-close:hover {background: rgba(0,0,0,0.75); transform: scale(1.08);}
-        .modal-body {padding: 1.5rem;}
-        .modal-body h3 {margin-bottom: 0.8rem;}
-        .modal-body .detail-row {display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: baseline; margin-bottom: 0.55rem; font-size: 0.9rem;}
-        .modal-body .detail-label {font-weight: 600; min-width: 80px; color: var(--text);}
-        .modal-body .detail-value {color: var(--text-secondary); word-break: break-all;}
-        .qr-img {width: 160px; height: 160px; border-radius: var(--radius-sm); border: 1px solid var(--border); object-fit: contain; background: #fff; display: block; margin: 0.8rem 0;}
-        .btn-block {width: 100%; justify-content: center; padding: 0.75rem 1.2rem; font-size: 0.95rem; margin-top: 0.4rem;}
-        .btn-upi {background: #6c3cc9; color: #fff; border-color: #6c3cc9; font-weight: 600;}
-        .btn-upi:hover {background: #5a2fb8; border-color: #5a2fb8; box-shadow: 0 3px 14px rgba(108,60,201,0.35);}
-        .divider-text {display: flex; align-items: center; gap: 0.6rem; color: var(--text-muted); font-size: 0.8rem; margin: 1rem 0;}
-        .divider-text::before, .divider-text::after {content: ''; flex: 1; height: 1px; background: var(--border);}
 
-        /* ── FLIPBOOK ── */
+        /* FLIPBOOK */
         .flipbook-container {
-            position: relative;
-            width: 100%;
+            flex: 1;
             display: flex;
-            align-items: center;
-            justify-content: center;
             flex-direction: column;
-            background: #1a1a18;
-            border-radius: var(--radius);
+            background: #121212;
+            position: relative;
             overflow: hidden;
-            min-height: 350px;
-            user-select: none;
-            -webkit-user-select: none;
         }
         .flipbook-stage {
-            perspective: var(--flipbook-perspective);
-            -webkit-perspective: var(--flipbook-perspective);
-            width: 100%;
+            flex: 1;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
-            position: relative;
-            flex-grow: 1;
-            min-height: 380px;
-        }
-        .flipbook-spread {display: flex; position: relative; transform-style: preserve-3d; -webkit-transform-style: preserve-3d;}
-        .flipbook-page-wrapper {
-            position: relative;
-            transform-style: preserve-3d;
-            -webkit-transform-style: preserve-3d;
-            flex-shrink: 0;
-            background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-            border-radius: 2px 4px 4px 2px;
             overflow: hidden;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
-        .flipbook-page-wrapper.flipping {transition: transform 0.55s cubic-bezier(0.22,0.61,0.36,1); z-index: 10;}
-        .flipbook-page-wrapper .page-front, .flipbook-page-wrapper .page-back {
+        .page-view {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-radius: 2px;
+        }
+        .page-peel-animation {
             position: absolute;
-            inset: 0;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-        }
-        .flipbook-page-wrapper .page-back {transform: rotateY(180deg); -webkit-transform: rotateY(180deg);}
-        .flipbook-page-wrapper canvas {width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none;}
-        .flipbook-page-wrapper .page-lock-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            color: #fff;
-            font-family: var(--font-serif);
-            font-size: 1.1rem;
-            text-align: center;
-            padding: 1rem;
-            z-index: 5;
-            pointer-events: auto;
-            transition: opacity 0.25s;
-        }
-        .flipbook-page-wrapper .page-lock-overlay .lock-text {text-shadow: 0 2px 8px rgba(0,0,0,0.6);}
-        .flipbook-nav {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 18px;
-            padding: 10px 16px;
-            background: #111;
-            color: #ccc;
-            font-size: 0.85rem;
-            flex-shrink: 0;
+            top: 0;
+            left: 0;
             width: 100%;
-            flex-wrap: wrap;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
         }
-        .flipbook-nav button {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
-            border-radius: 50px;
-            padding: 0.45rem 1rem;
+        .peel-half {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            overflow: hidden;
+            backface-visibility: hidden;
+        }
+        .peel-left {
+            left: 0;
+            width: 50%;
+            clip-path: inset(0 0 0 0);
+        }
+        .peel-right {
+            right: 0;
+            width: 50%;
+            transform-origin: right center;
+            transition: transform var(--flip-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            clip-path: inset(0 0 0 0);
+        }
+        .peel-right img {
+            width: 200%;
+            max-width: none;
+            height: 100%;
+            object-fit: contain;
+            object-position: left center;
+            transform: translateX(-100%);
+        }
+        .peel-left img {
+            width: 200%;
+            max-width: none;
+            height: 100%;
+            object-fit: contain;
+            object-position: left center;
+        }
+
+        .floating-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(8px);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-size: 0.82rem;
-            transition: all var(--transition-fast);
+            z-index: 20;
+            transition: background 0.2s;
             -webkit-tap-highlight-color: transparent;
-            white-space: nowrap;
+            user-select: none;
         }
-        .flipbook-nav button:hover {background: rgba(255,255,255,0.2);}
-        .flipbook-nav button:disabled {opacity: 0.3; pointer-events: none;}
-        .flipbook-nav .page-indicator {font-variant-numeric: tabular-nums; font-family: var(--font-sans); min-width: 60px; text-align: center;}
+        .floating-nav:hover {background: rgba(255,255,255,0.4);}
+        .nav-prev {left: 12px;}
+        .nav-next {right: 12px;}
+        @media (max-width: 480px) {
+            .floating-nav {width: 40px; height: 40px; font-size: 1.6rem;}
+            .nav-prev {left: 6px;} .nav-next {right: 6px;}
+        }
+
         .flipbook-loading {
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(26,26,24,0.9);
-            z-index: 5;
+            background: rgba(0,0,0,0.8);
             color: #ccc;
-            font-size: 1rem;
-            pointer-events: none;
-            transition: opacity 0.4s;
+            z-index: 25;
         }
-        .flipbook-loading.hidden {opacity: 0; pointer-events: none;}
+        .flipbook-loading.hidden {display: none;}
 
-        /* ── Shipping Form ── */
-        .shipping-form {display: flex; flex-direction: column; gap: 0.8rem;}
-        .shipping-form input, .shipping-form textarea {
-            width: 100%;
-            padding: 0.65rem 0.8rem;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            background: var(--bg);
-            color: var(--text);
-            font-family: var(--font-sans);
+        .page-indicator-bar {
+            padding: 10px;
+            text-align: center;
+            color: #aaa;
             font-size: 0.9rem;
+            background: #1a1a1a;
+            flex-shrink: 0;
         }
-        .shipping-form textarea {resize: vertical; min-height: 60px;}
 
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            .flipbook-stage {min-height: 280px; padding: 8px;}
-            .flipbook-container {min-height: 280px;}
-            .flipbook-nav {gap: 8px; padding: 8px 10px; font-size: 0.78rem;}
-            .flipbook-nav button {padding: 0.35rem 0.7rem; font-size: 0.75rem;}
-            .modal-panel.flipbook-panel {max-width: 98vw; max-width: 98dvw; border-radius: var(--radius-sm);}
-            .modal-close {top: 6px; right: 8px; width: 30px; height: 30px; font-size: 1rem;}
+        /* toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1a1a1a;
+            color: #fff;
+            padding: 0.7rem 1.4rem;
+            border-radius: 50px;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.25s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
         }
-        @media (max-width: 380px) {
-            .flipbook-stage {min-height: 220px; padding: 4px;}
-            .flipbook-container {min-height: 220px;}
-            .flipbook-nav {gap: 4px; padding: 6px;}
-            .flipbook-nav button {padding: 0.3rem 0.55rem; font-size: 0.7rem;}
-            .product-grid {grid-template-columns: 1fr; gap: 14px;}
-        }
-        @media (min-width: 1400px) {
-            .flipbook-stage {min-height: 520px;}
-            .flipbook-container {min-height: 520px;}
-            .modal-panel.flipbook-panel {max-width: 75vw; max-width: 75dvw;}
-        }
-        @media (max-width: 240px) {
-            .flipbook-stage {min-height: 150px;}
-            .flipbook-container {min-height: 150px;}
-            .flipbook-nav button {padding: 0.2rem 0.4rem; font-size: 0.6rem;}
-            .btn {padding: 0.35rem 0.6rem; font-size: 0.7rem;}
-        }
+        .toast.show {opacity: 1; transform: translateX(-50%) translateY(0);}
     </style>
 </head>
 <body>
 
-    <!-- ═══════════ HERO ═══════════ -->
     <header class="hero">
-        <div class="hero-placeholder" aria-hidden="true"></div>
+        <div class="hero-placeholder"></div>
         <div class="hero-content">
             <h1>Tarang Joshi</h1>
             <p class="subtitle">Photo Books · created with 14Trees</p>
-            <p class="byline">Ungreen Scape &amp; Between Shadows</p>
+            <p class="byline" style="color:#999; text-transform:uppercase; letter-spacing:0.05em;">Ungreen Scape & Between Shadows</p>
         </div>
     </header>
 
-    <!-- ═══════════ PRODUCTS ═══════════ -->
-    <main class="container section" id="store">
-        <div class="section-header">
+    <main class="container section">
+        <div style="text-align:center; margin-bottom:2rem;">
             <h2>The Books</h2>
-            <span class="section-rule"></span>
-            <p class="text-muted" style="margin-top:0.4rem;">Physical photo books — preview gated, unlock with a donation to EkDharani</p>
+            <p class="text-muted">Physical photo books — preview gated, unlock with a donation</p>
         </div>
-
         <div class="product-grid">
             <!-- Book 1 -->
-            <article class="product-card" data-book="ungreen-scape">
-                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book-name="Ungreen Scape" aria-label="Preview Ungreen Scape">
-                    <img src="tarang.joshi-2509-ungreen-scape.jpg" alt="Ungreen Scape cover" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#3a4a3a,#5a6a4a)';">
-                    <div class="thumb-overlay"><span class="thumb-overlay-icon">📖</span></div>
+            <article class="product-card">
+                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book="Ungreen Scape" data-key="ungreen-scape">
+                    <img src="tarang.joshi-2509-ungreen-scape.jpg" alt="Ungreen Scape" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='#3a4a3a';">
                 </div>
                 <div class="product-card__body">
-                    <span class="book-subtitle">Book 1</span>
                     <h3>Ungreen Scape</h3>
-                    <p>Exploring the tension between the natural and the constructed — a meditation on landscapes that resist easy categorization.</p>
+                    <p>Exploring the tension between the natural and the constructed.</p>
                     <div class="product-card__actions">
-                        <button class="btn btn-outline btn-sm preview-trigger" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book-name="Ungreen Scape">Preview</button>
-                        <a class="btn btn-whatsapp btn-sm" href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20your%20photo%20book%20*Ungreen%20Scape*.%20Please%20share%20details." target="_blank" rel="noopener">Order via WhatsApp</a>
-                        <button class="btn btn-donate btn-sm donate-trigger" data-book-name="Ungreen Scape" data-book-key="ungreen-scape">Donate to Buy</button>
+                        <button class="btn btn-outline btn-sm preview-btn" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book="Ungreen Scape" data-key="ungreen-scape">Preview</button>
+                        <a class="btn btn-whatsapp btn-sm" href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Ungreen%20Scape*.%20Please%20share%20details." target="_blank">WhatsApp</a>
+                        <button class="btn btn-donate btn-sm donate-btn" data-book="Ungreen Scape" data-key="ungreen-scape">Donate to Buy</button>
                     </div>
                 </div>
             </article>
             <!-- Book 2 -->
-            <article class="product-card" data-book="between-shadows">
-                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book-name="Between Shadows" aria-label="Preview Between Shadows">
-                    <img src="tarang.joshi-2503-between-shadows.jpg" alt="Between Shadows cover" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#2a2a3a,#3a3a4a)';">
-                    <div class="thumb-overlay"><span class="thumb-overlay-icon">📖</span></div>
+            <article class="product-card">
+                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book="Between Shadows" data-key="between-shadows">
+                    <img src="tarang.joshi-2503-between-shadows.jpg" alt="Between Shadows" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='#2a2a3a';">
                 </div>
                 <div class="product-card__body">
-                    <span class="book-subtitle">Book 2</span>
                     <h3>Between Shadows</h3>
-                    <p>Where light falters and form dissolves — a visual journey through the liminal spaces between presence and absence.</p>
+                    <p>Where light falters and form dissolves — a visual journey.</p>
                     <div class="product-card__actions">
-                        <button class="btn btn-outline btn-sm preview-trigger" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book-name="Between Shadows">Preview</button>
-                        <a class="btn btn-whatsapp btn-sm" href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20your%20photo%20book%20*Between%20Shadows*.%20Please%20share%20details." target="_blank" rel="noopener">Order via WhatsApp</a>
-                        <button class="btn btn-donate btn-sm donate-trigger" data-book-name="Between Shadows" data-book-key="between-shadows">Donate to Buy</button>
+                        <button class="btn btn-outline btn-sm preview-btn" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book="Between Shadows" data-key="between-shadows">Preview</button>
+                        <a class="btn btn-whatsapp btn-sm" href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Between%20Shadows*.%20Please%20share%20details." target="_blank">WhatsApp</a>
+                        <button class="btn btn-donate btn-sm donate-btn" data-book="Between Shadows" data-key="between-shadows">Donate to Buy</button>
                     </div>
                 </div>
             </article>
         </div>
     </main>
 
-    <!-- ═══════════ VIDEO PLACEHOLDER ═══════════ -->
-    <section class="container section" id="video">
-        <div class="section-header"><h2>Video</h2><span class="section-rule"></span></div>
-        <div class="placeholder-section"><span class="icon-placeholder">🎬</span><h3>Coming Soon</h3><p>A short film exploring the stories behind the photographs.</p></div>
-    </section>
-
-    <!-- ═══════════ STORIES PLACEHOLDER ═══════════ -->
-    <section class="container section" id="stories">
-        <div class="section-header"><h2>Stories</h2><span class="section-rule"></span></div>
-        <div class="placeholder-section"><span class="icon-placeholder">📝</span><h3>Blog · Coming Soon</h3><p>Behind-the-scenes narratives, field notes, and reflections.</p></div>
-    </section>
-
-    <!-- ═══════════ FOOTER ═══════════ -->
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2025 Tarang Joshi · Photos created with <a href="#">14Trees</a> · All rights reserved.</p>
-            <p style="margin-top:0.3rem;">Support <strong>EkDharani</strong> — every donation helps sustain the work.</p>
-        </div>
+    <footer style="text-align:center; padding:2rem 0; border-top:1px solid var(--border); color:var(--text-muted);">
+        <p>© 2025 Tarang Joshi · Support EkDharani</p>
     </footer>
 
-    <!-- ═══════════ FLIPBOOK MODAL ═══════════ -->
-    <div class="modal-backdrop" id="flipbook-modal" aria-hidden="true">
-        <div class="modal-panel flipbook-panel" role="dialog" aria-modal="true" aria-label="Flipbook Preview">
-            <button class="modal-close" id="flipbook-close" aria-label="Close flipbook">&times;</button>
-            <div class="flipbook-container" id="flipbook-container">
-                <div class="flipbook-loading" id="flipbook-loading">Loading PDF…</div>
-                <div class="flipbook-stage" id="flipbook-stage"></div>
-                <nav class="flipbook-nav">
-                    <button id="fb-prev" aria-label="Previous page">← Prev</button>
-                    <span class="page-indicator" id="fb-indicator">1 / 10</span>
-                    <button id="fb-next" aria-label="Next page">Next →</button>
-                </nav>
+    <!-- FLIPBOOK MODAL -->
+    <div class="modal-backdrop" id="flipbook-modal">
+        <div class="modal-panel flipbook-panel">
+            <button class="modal-close" id="close-flipbook">&times;</button>
+            <div class="flipbook-container">
+                <div class="flipbook-loading hidden" id="fb-loading">Loading PDF…</div>
+                <div class="flipbook-stage" id="fb-stage">
+                    <div class="page-view" id="page-view"></div>
+                    <button class="floating-nav nav-prev" id="nav-prev" aria-label="Previous page">‹</button>
+                    <button class="floating-nav nav-next" id="nav-next" aria-label="Next page">›</button>
+                </div>
+                <div class="page-indicator-bar" id="fb-indicator">1 / 1</div>
             </div>
         </div>
     </div>
 
-    <!-- ═══════════ PAYMENT MODAL ═══════════ -->
-    <div class="modal-backdrop" id="payment-modal" aria-hidden="true">
-        <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Payment Options">
-            <button class="modal-close" id="payment-close" aria-label="Close payment">&times;</button>
-            <div class="modal-body" id="payment-body">
-                <!-- dynamically filled: initial content or shipping form -->
+    <!-- PAYMENT MODAL -->
+    <div class="modal-backdrop" id="payment-modal">
+        <div class="modal-panel" style="max-width:480px;">
+            <button class="modal-close" id="close-payment" style="color:#000;">&times;</button>
+            <div style="padding:1.8rem;" id="payment-body">
+                <!-- dynamic -->
             </div>
         </div>
     </div>
 
-    <!-- ═══════════ TOAST ═══════════ -->
-    <div class="toast" id="toast" aria-live="polite"></div>
+    <div class="toast" id="toast"></div>
 
     <script>
         (function() {
-            // Set PDF.js worker
             if (typeof pdfjsLib !== 'undefined') {
                 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
             }
 
-            // DOM refs
-            const flipbookModal = document.getElementById('flipbook-modal');
-            const flipbookClose = document.getElementById('flipbook-close');
-            const flipbookStage = document.getElementById('flipbook-stage');
-            const flipbookLoading = document.getElementById('flipbook-loading');
-            const fbPrev = document.getElementById('fb-prev');
-            const fbNext = document.getElementById('fb-next');
+            const fbModal = document.getElementById('flipbook-modal');
+            const payModal = document.getElementById('payment-modal');
+            const fbStage = document.getElementById('fb-stage');
+            const pageView = document.getElementById('page-view');
+            const fbLoading = document.getElementById('fb-loading');
             const fbIndicator = document.getElementById('fb-indicator');
-            const paymentModal = document.getElementById('payment-modal');
-            const paymentClose = document.getElementById('payment-close');
-            const paymentBody = document.getElementById('payment-body');
+            const navPrev = document.getElementById('nav-prev');
+            const navNext = document.getElementById('nav-next');
             const toast = document.getElementById('toast');
-            const upiLink = document.getElementById('upi-link'); // will be recreated
 
-            // State
-            let currentPdfUrl = null;
-            let currentBookKey = null;
-            let currentBookName = null;
             let pdfDoc = null;
-            let allPages = []; // array of page numbers 1..N
-            let currentPageIndex = 0;
-            let isFlipping = false;
-            let unlockedBooks = {};
-            let renderedCanvases = {};
-            const PREVIEW_FIRST_N = 5;
-            const PREVIEW_LAST_N = 5;
+            let pages = [];
+            let currentIdx = 0;
+            let currentBookKey = '';
+            let currentBookName = '';
+            let unlocked = {};
+            let isAnimating = false;
+            const FIRST = 5, LAST = 5;
 
-            // localStorage
-            try {
-                const stored = localStorage.getItem('ekdharani_unlocked_books');
-                if (stored) unlockedBooks = JSON.parse(stored);
-            } catch (e) {}
+            // Load unlock state
+            try { unlocked = JSON.parse(localStorage.getItem('ekdharani_unlocked') || '{}'); } catch(e) {}
 
-            function saveUnlockedBooks() {
-                try { localStorage.setItem('ekdharani_unlocked_books', JSON.stringify(unlockedBooks)); } catch (e) {}
-            }
+            function saveUnlocks() { localStorage.setItem('ekdharani_unlocked', JSON.stringify(unlocked)); }
 
-            // Toast
-            let toastTimer;
-            function showToast(msg) {
-                clearTimeout(toastTimer);
+            function toastMsg(msg) {
                 toast.textContent = msg;
                 toast.classList.add('show');
-                toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+                clearTimeout(toast._t);
+                toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
             }
 
-            // Modal helpers
-            function openModal(modal) {
-                modal.setAttribute('aria-hidden', 'false');
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            function closeModal(modal) {
-                modal.setAttribute('aria-hidden', 'true');
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            flipbookClose.addEventListener('click', () => closeModal(flipbookModal));
-            paymentClose.addEventListener('click', () => {
-                closeModal(paymentModal);
-                // reset payment body to initial state
-                renderPaymentInitial();
-            });
-            flipbookModal.addEventListener('click', e => { if (e.target === flipbookModal) closeModal(flipbookModal); });
-            paymentModal.addEventListener('click', e => { if (e.target === paymentModal) closeModal(paymentModal); });
+            // Modal controls
+            function openModal(m) { m.classList.add('active'); document.body.style.overflow='hidden'; }
+            function closeModal(m) { m.classList.remove('active'); document.body.style.overflow=''; }
+            document.getElementById('close-flipbook').onclick = () => closeModal(fbModal);
+            document.getElementById('close-payment').onclick = () => closeModal(payModal);
+            fbModal.addEventListener('click', e => { if(e.target===fbModal) closeModal(fbModal); });
+            payModal.addEventListener('click', e => { if(e.target===payModal) closeModal(payModal); });
             document.addEventListener('keydown', e => {
                 if (e.key === 'Escape') {
-                    if (paymentModal.classList.contains('active')) closeModal(paymentModal);
-                    else if (flipbookModal.classList.contains('active')) closeModal(flipbookModal);
+                    if (payModal.classList.contains('active')) closeModal(payModal);
+                    else if (fbModal.classList.contains('active')) closeModal(fbModal);
                 }
             });
 
-            // ── Payment modal content ──
-            function renderPaymentInitial() {
-                paymentBody.innerHTML = `
-                    <h3>Donate to EkDharani</h3>
-                    <p style="margin-bottom:1rem;">Your donation helps unlock the complete book. Choose any method below.</p>
-                    <a id="upi-link" href="upi://pay?pa=EKDHARANI.09@cmsidfc&pn=Donation%20to%20EkDharani&mode=02&am=" class="btn btn-upi btn-block" target="_blank" rel="noopener">📱 Tap to Pay via UPI</a>
-                    <p class="text-muted" style="text-align:center;margin-top:0.3rem;">Opens your UPI app instantly</p>
-                    <div class="divider-text">or scan QR</div>
-                    <div style="text-align:center;">
-                        <img src="ek.dharani.UPI.png" alt="EkDharani UPI QR Code" class="qr-img" loading="lazy" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<p class=text-muted style=text-align:center;>QR image not available — use UPI link or bank details.</p>');">
-                        <p class="text-muted">Scan this QR with any UPI app</p>
-                    </div>
-                    <div class="divider-text">bank details</div>
-                    <div style="background:var(--bg);border-radius:var(--radius-sm);padding:1rem;border:1px solid var(--border);">
-                        <div class="detail-row"><span class="detail-label">Account:</span><span class="detail-value">10059271015</span></div>
-                        <div class="detail-row"><span class="detail-label">IFSC:</span><span class="detail-value">IDFB0040101</span></div>
-                        <div class="detail-row"><span class="detail-label">Bank:</span><span class="detail-value">IDFC</span></div>
-                        <div class="detail-row"><span class="detail-label">Beneficiary:</span><span class="detail-value">EkDharani</span></div>
-                    </div>
-                    <button class="btn btn-primary btn-block" id="donated-confirm-btn" style="margin-top:1.2rem;">✅ I have donated — Proceed</button>
-                    <p class="text-muted" style="text-align:center;margin-top:0.4rem;">After your donation completes, click above to provide shipping details.</p>
-                `;
-                // attach event to new button
-                document.getElementById('donated-confirm-btn')?.addEventListener('click', showShippingForm);
-                // UPI mobile detection
-                const upiBtn = document.getElementById('upi-link');
-                if (upiBtn) {
-                    upiBtn.addEventListener('click', function(e) {
-                        if (!isMobileDevice()) {
-                            e.preventDefault();
-                            const qrImg = paymentBody.querySelector('.qr-img');
-                            if (qrImg) qrImg.scrollIntoView({ behavior: 'smooth' });
-                            showToast('On desktop, please scan the QR code or use bank details');
-                        }
-                    });
-                }
+            function isPageLocked(pageNum, total) {
+                if (!currentBookKey || unlocked[currentBookKey]) return false;
+                if (total <= FIRST + LAST) return false;
+                return !(pageNum <= FIRST || pageNum > total - LAST);
             }
 
-            function showShippingForm() {
-                if (!currentBookName) return;
-                paymentBody.innerHTML = `
-                    <h3>Shipping Details</h3>
-                    <p class="text-muted">We'll courier <strong>${currentBookName}</strong> to you.</p>
-                    <form class="shipping-form" id="shipping-form">
-                        <input type="text" id="cust-name" placeholder="Full Name" required>
-                        <textarea id="cust-address" placeholder="Full Address (with pincode)" required></textarea>
-                        <input type="tel" id="cust-phone" placeholder="Phone Number (optional)">
-                        <button type="submit" class="btn btn-primary btn-block">Submit Order & Unlock</button>
-                    </form>
-                    <p class="text-muted" style="text-align:center;margin-top:0.5rem;">We'll send your details via WhatsApp to confirm.</p>
-                `;
-                document.getElementById('shipping-form').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const name = document.getElementById('cust-name').value.trim();
-                    const address = document.getElementById('cust-address').value.trim();
-                    const phone = document.getElementById('cust-phone').value.trim();
-                    if (!name || !address) return showToast('Please fill name and address.');
-                    const msg = `Hi Tarang, I've donated to EkDharani and would like to receive *${currentBookName}*.%0A%0AName: ${encodeURIComponent(name)}%0AAddress: ${encodeURIComponent(address)}%0APhone: ${encodeURIComponent(phone || 'Not provided')}%0A%0APlease confirm.`;
-                    window.open(`https://wa.me/91993006169?text=${msg}`, '_blank');
-                    // Unlock the book
-                    if (currentBookKey) {
-                        unlockedBooks[currentBookKey] = true;
-                        saveUnlockedBooks();
-                    }
-                    closeModal(paymentModal);
-                    showToast('🎉 Book unlocked! Order details sent via WhatsApp.');
-                    // Reload flipbook if open
-                    if (flipbookModal.classList.contains('active') && currentPdfUrl) {
-                        loadFlipbookPDF(currentPdfUrl, currentBookKey);
-                    }
-                });
-            }
-
-            function isMobileDevice() {
-                return /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || ('ontouchstart' in window && window.innerWidth < 1024);
-            }
-
-            // ── Flipbook logic ──
-            async function loadFlipbookPDF(pdfUrl, bookKey) {
-                currentPdfUrl = pdfUrl;
-                currentBookKey = bookKey;
-                allPages = [];
-                currentPageIndex = 0;
-                renderedCanvases = {};
-                pdfDoc = null;
-                flipbookStage.innerHTML = '';
-                flipbookLoading.classList.remove('hidden');
-                flipbookLoading.innerHTML = 'Loading PDF…';
-                fbPrev.disabled = true;
-                fbNext.disabled = true;
-                fbIndicator.textContent = '…';
-
-                const isUnlocked = !!unlockedBooks[bookKey];
-                try {
-                    if (typeof pdfjsLib === 'undefined') throw new Error('PDF.js not loaded.');
-                    const loadingTask = pdfjsLib.getDocument(pdfUrl);
-                    pdfDoc = await loadingTask.promise;
-                    const totalPages = pdfDoc.numPages;
-                    for (let i = 1; i <= totalPages; i++) allPages.push(i);
-
-                    flipbookLoading.classList.add('hidden');
-                    if (allPages.length === 0) {
-                        showToast('PDF has no pages.');
-                        return;
-                    }
-                    fbPrev.disabled = true;
-                    fbNext.disabled = allPages.length <= 1;
-                    updateIndicator();
-                    await renderCurrentSpread();
-                } catch (err) {
-                    console.error(err);
-                    flipbookLoading.innerHTML = '<span style="color:#e88;">⚠ Failed to load PDF.</span><br><small style="color:#aaa;">' + err.message + '</small>';
-                    flipbookLoading.classList.remove('hidden');
-                    showToast('Failed to load PDF.');
-                }
-            }
-
-            function updateIndicator() {
-                if (allPages.length === 0) { fbIndicator.textContent = '0 / 0'; return; }
-                fbIndicator.textContent = (currentPageIndex + 1) + ' / ' + allPages.length;
-            }
-
-            function isPageLocked(pageNum) {
-                if (!currentBookKey || unlockedBooks[currentBookKey]) return false;
-                const total = allPages.length;
-                if (total <= PREVIEW_FIRST_N + PREVIEW_LAST_N) return false; // all visible
-                const inFirst = pageNum <= PREVIEW_FIRST_N;
-                const inLast = pageNum > total - PREVIEW_LAST_N;
-                return !(inFirst || inLast);
-            }
-
-            async function renderPageToCanvas(pageNum) {
+            async function renderPageCanvas(pageNum) {
                 if (!pdfDoc) return null;
-                const cacheKey = 'p' + pageNum;
-                if (renderedCanvases[cacheKey]) return renderedCanvases[cacheKey].cloneNode(true);
                 try {
                     const page = await pdfDoc.getPage(pageNum);
-                    const viewport = page.getViewport({ scale: 1.0 });
-                    const stageWidth = flipbookStage.clientWidth || 400;
-                    const stageHeight = flipbookStage.clientHeight || 500;
-                    const isWide = stageWidth >= 600;
-                    const maxWidth = isWide ? (stageWidth * 0.45) : (stageWidth * 0.85);
-                    const maxHeight = stageHeight * 0.85;
-                    const scaleW = maxWidth / viewport.width;
-                    const scaleH = maxHeight / viewport.height;
-                    const scale = Math.min(scaleW, scaleH, 2.5);
-                    const scaledViewport = page.getViewport({ scale });
+                    const viewport = page.getViewport({scale: 1.5});
                     const canvas = document.createElement('canvas');
-                    canvas.width = scaledViewport.width;
-                    canvas.height = scaledViewport.height;
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
                     const ctx = canvas.getContext('2d');
-                    await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
-                    renderedCanvases[cacheKey] = canvas.cloneNode(true);
+                    await page.render({canvasContext: ctx, viewport}).promise;
                     return canvas;
-                } catch (err) {
-                    console.warn('Render error page', pageNum, err);
-                    const fallback = document.createElement('canvas');
-                    fallback.width = 200; fallback.height = 280;
-                    const fctx = fallback.getContext('2d');
-                    fctx.fillStyle = '#e0e0dc'; fctx.fillRect(0,0,200,280);
-                    fctx.fillStyle = '#999'; fctx.font = '14px sans-serif'; fctx.textAlign = 'center';
-                    fctx.fillText('Page ' + pageNum, 100, 140);
-                    return fallback;
+                } catch (e) {
+                    const c = document.createElement('canvas'); c.width=200; c.height=280;
+                    const ctx=c.getContext('2d'); ctx.fillStyle='#eee'; ctx.fillRect(0,0,200,280);
+                    ctx.fillStyle='#888'; ctx.fillText('Page '+pageNum,40,140);
+                    return c;
                 }
             }
 
-            async function renderCurrentSpread() {
-                if (allPages.length === 0 || !pdfDoc) return;
-                flipbookStage.innerHTML = '';
-                const pageNum = allPages[currentPageIndex];
-                const canvas = await renderPageToCanvas(pageNum);
-                if (!canvas) return;
-
-                const wrapper = document.createElement('div');
-                wrapper.className = 'flipbook-page-wrapper';
-                wrapper.style.width = canvas.width + 'px';
-                wrapper.style.height = canvas.height + 'px';
-                wrapper.setAttribute('data-page-num', pageNum);
-
-                const front = document.createElement('div');
-                front.className = 'page-front';
-                front.appendChild(canvas);
-
-                const back = document.createElement('div');
-                back.className = 'page-back';
-
-                const nextIdx = currentPageIndex + 1;
-                if (nextIdx < allPages.length) {
-                    const nextCanvas = await renderPageToCanvas(allPages[nextIdx]);
-                    if (nextCanvas) back.appendChild(nextCanvas);
+            function showPage(canvas) {
+                pageView.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = canvas.toDataURL();
+                img.className = 'page-canvas';
+                if (isPageLocked(pages[currentIdx], pages.length)) {
+                    img.style.filter = 'blur(12px) brightness(0.5)';
+                    const lock = document.createElement('div');
+                    lock.style.position='absolute'; lock.style.inset='0';
+                    lock.style.display='flex'; lock.style.alignItems='center'; lock.style.justifyContent='center';
+                    lock.style.color='white'; lock.style.fontSize='1.2rem'; lock.style.textShadow='0 2px 8px black';
+                    lock.innerHTML = '🔒 Donate to EkDharani<br>to unlock';
+                    pageView.appendChild(img);
+                    pageView.appendChild(lock);
+                } else {
+                    pageView.appendChild(img);
                 }
-                wrapper.appendChild(front);
-                wrapper.appendChild(back);
-
-                // Add lock overlay if page is locked
-                if (isPageLocked(pageNum)) {
-                    const lockDiv = document.createElement('div');
-                    lockDiv.className = 'page-lock-overlay';
-                    lockDiv.innerHTML = '<span class="lock-text">🔒 Donate to EkDharani<br>to unlock this page</span>';
-                    wrapper.appendChild(lockDiv);
-                }
-
-                flipbookStage.appendChild(wrapper);
-
-                fbPrev.disabled = currentPageIndex === 0;
-                fbNext.disabled = currentPageIndex >= allPages.length - 1;
-                updateIndicator();
-                preloadAdjacent();
+                fbIndicator.textContent = `${currentIdx+1} / ${pages.length}`;
+                navPrev.style.opacity = currentIdx === 0 ? '0.3' : '1';
+                navNext.style.opacity = currentIdx >= pages.length-1 ? '0.3' : '1';
             }
 
-            async function preloadAdjacent() {
-                const toPreload = [];
-                const prev = currentPageIndex - 1;
-                const next = currentPageIndex + 1;
-                const next2 = currentPageIndex + 2;
-                if (prev >= 0) toPreload.push(allPages[prev]);
-                if (next < allPages.length) toPreload.push(allPages[next]);
-                if (next2 < allPages.length) toPreload.push(allPages[next2]);
-                for (const pn of toPreload) {
-                    if (!renderedCanvases['p' + pn]) {
-                        try { await renderPageToCanvas(pn); } catch (e) {}
+            async function goToPage(index) {
+                if (index < 0 || index >= pages.length) return;
+                currentIdx = index;
+                const canvas = await renderPageCanvas(pages[currentIdx]);
+                if (canvas) showPage(canvas);
+            }
+
+            async function animatePeel(direction) {
+                if (isAnimating || pages.length < 2) return;
+                const targetIdx = currentIdx + direction;
+                if (targetIdx < 0 || targetIdx >= pages.length) return;
+                isAnimating = true;
+
+                const currentCanvas = await renderPageCanvas(pages[currentIdx]);
+                const targetCanvas = await renderPageCanvas(pages[targetIdx]);
+                if (!currentCanvas || !targetCanvas) { isAnimating = false; return; }
+
+                // Prepare peel overlay
+                const peelContainer = document.createElement('div');
+                peelContainer.className = 'page-peel-animation';
+                peelContainer.style.position = 'absolute';
+                peelContainer.style.inset = '0';
+                peelContainer.style.zIndex = '15';
+
+                // Left half (static)
+                const leftHalf = document.createElement('div');
+                leftHalf.className = 'peel-half peel-left';
+                const leftImg = document.createElement('img');
+                leftImg.src = currentCanvas.toDataURL();
+                leftImg.style.width = '200%';
+                leftImg.style.height = '100%';
+                leftImg.style.objectFit = 'contain';
+                leftImg.style.objectPosition = 'left center';
+                leftHalf.appendChild(leftImg);
+
+                // Right half (will animate)
+                const rightHalf = document.createElement('div');
+                rightHalf.className = 'peel-half peel-right';
+                const rightImg = document.createElement('img');
+                rightImg.src = currentCanvas.toDataURL();
+                rightImg.style.width = '200%';
+                rightImg.style.height = '100%';
+                rightImg.style.objectFit = 'contain';
+                rightImg.style.objectPosition = 'left center';
+                rightImg.style.transform = 'translateX(-100%)';
+                rightHalf.appendChild(rightImg);
+
+                peelContainer.appendChild(leftHalf);
+                peelContainer.appendChild(rightHalf);
+
+                // Target page background
+                pageView.innerHTML = '';
+                const bgImg = document.createElement('img');
+                bgImg.src = targetCanvas.toDataURL();
+                bgImg.className = 'page-canvas';
+                bgImg.style.filter = isPageLocked(pages[targetIdx], pages.length) ? 'blur(12px) brightness(0.5)' : 'none';
+                pageView.appendChild(bgImg);
+                pageView.appendChild(peelContainer);
+
+                // Start animation
+                requestAnimationFrame(() => {
+                    if (direction > 0) {
+                        // forward: right half rotates from 0 to -180
+                        rightHalf.style.transform = 'rotateY(-180deg)';
+                    } else {
+                        // backward: right half starts rotated and goes to 0
+                        rightHalf.style.transform = 'rotateY(-180deg)';
+                        requestAnimationFrame(() => {
+                            rightHalf.style.transition = `transform var(--flip-duration) cubic-bezier(0.25,0.46,0.45,0.94)`;
+                            rightHalf.style.transform = 'rotateY(0deg)';
+                        });
+                        // For backward, we need the target page to be the one from which we are peeling,
+                        // but we already set bgImg as target. Actually backward animation should show the current page
+                        // being covered by the previous page's right half. That's a bit different.
+                        // Simplified: For backward, we'll treat it similar but we show the previous page as bg and peel the current page's right half back to 0? That would look odd.
+                        // Let's keep it simple: animate the right half of the target page? We'll adapt:
+                        // We'll replace bgImg with currentCanvas (the page we are leaving) and peel targetCanvas's right half from -180 to 0.
                     }
-                }
-            }
+                });
 
-            async function flipPage(direction) {
-                if (isFlipping || !pdfDoc || allPages.length === 0) return;
-                const targetIndex = currentPageIndex + direction;
-                if (targetIndex < 0 || targetIndex >= allPages.length) return;
-
-                isFlipping = true;
-                const wrapper = flipbookStage.querySelector('.flipbook-page-wrapper');
-                if (!wrapper) { isFlipping = false; return; }
-
-                const back = wrapper.querySelector('.page-back');
-                if (back) {
-                    back.innerHTML = '';
-                    const targetCanvas = await renderPageToCanvas(allPages[targetIndex]);
-                    if (targetCanvas) back.appendChild(targetCanvas);
-                }
-
-                wrapper.style.transformOrigin = direction > 0 ? 'left center' : 'right center';
-                wrapper.style.webkitTransformOrigin = direction > 0 ? 'left center' : 'right center';
-                wrapper.classList.add('flipping');
-                const rotateDeg = direction > 0 ? -180 : 180;
-                wrapper.style.transform = 'rotateY(' + rotateDeg + 'deg)';
-                wrapper.style.webkitTransform = 'rotateY(' + rotateDeg + 'deg)';
-
-                const onTransitionEnd = () => {
-                    wrapper.removeEventListener('transitionend', onTransitionEnd);
-                    wrapper.classList.remove('flipping');
-                    wrapper.style.transform = '';
-                    wrapper.style.webkitTransform = '';
-                    currentPageIndex = targetIndex;
-                    isFlipping = false;
-                    renderCurrentSpread();
+                const finish = () => {
+                    rightHalf.removeEventListener('transitionend', finish);
+                    peelContainer.remove();
+                    currentIdx = targetIdx;
+                    isAnimating = false;
+                    goToPage(currentIdx);
                 };
-                wrapper.addEventListener('transitionend', onTransitionEnd);
-                setTimeout(() => {
-                    if (isFlipping && currentPageIndex !== targetIndex) onTransitionEnd();
-                }, 700);
-
-                fbPrev.disabled = true;
-                fbNext.disabled = true;
+                rightHalf.addEventListener('transitionend', finish);
+                setTimeout(finish, 700);
             }
 
-            fbNext.addEventListener('click', () => flipPage(1));
-            fbPrev.addEventListener('click', () => flipPage(-1));
+            // Simplified backward animation fix: we'll just flip backwards by swapping logic.
+            // Refined backward animation:
+            async function animatePeelBackward() {
+                if (isAnimating || pages.length < 2 || currentIdx <= 0) return;
+                const targetIdx = currentIdx - 1;
+                isAnimating = true;
 
+                const currentCanvas = await renderPageCanvas(pages[currentIdx]);
+                const targetCanvas = await renderPageCanvas(pages[targetIdx]);
+                if (!currentCanvas || !targetCanvas) { isAnimating = false; return; }
+
+                // Background is the target page (previous page)
+                pageView.innerHTML = '';
+                const bgImg = document.createElement('img');
+                bgImg.src = targetCanvas.toDataURL();
+                bgImg.className = 'page-canvas';
+                pageView.appendChild(bgImg);
+
+                // Peel overlay: use the CURRENT page's right half, initially rotated -180 (hidden), animate to 0
+                const peelContainer = document.createElement('div');
+                peelContainer.className = 'page-peel-animation';
+                peelContainer.style.position = 'absolute'; peelContainer.style.inset = '0'; peelContainer.style.zIndex = '15';
+
+                const leftHalf = document.createElement('div');
+                leftHalf.className = 'peel-half peel-left';
+                const leftImg = document.createElement('img');
+                leftImg.src = currentCanvas.toDataURL();
+                leftImg.style.width = '200%'; leftImg.style.height = '100%'; leftImg.style.objectFit = 'contain'; leftImg.style.objectPosition = 'left center';
+                leftHalf.appendChild(leftImg);
+
+                const rightHalf = document.createElement('div');
+                rightHalf.className = 'peel-half peel-right';
+                rightHalf.style.transform = 'rotateY(-180deg)';
+                rightHalf.style.transition = 'none';
+                const rightImg = document.createElement('img');
+                rightImg.src = currentCanvas.toDataURL();
+                rightImg.style.width = '200%'; rightImg.style.height = '100%'; rightImg.style.objectFit = 'contain'; rightImg.style.objectPosition = 'left center';
+                rightImg.style.transform = 'translateX(-100%)';
+                rightHalf.appendChild(rightImg);
+
+                peelContainer.appendChild(leftHalf);
+                peelContainer.appendChild(rightHalf);
+                pageView.appendChild(peelContainer);
+
+                requestAnimationFrame(() => {
+                    rightHalf.style.transition = `transform var(--flip-duration) cubic-bezier(0.25,0.46,0.45,0.94)`;
+                    rightHalf.style.transform = 'rotateY(0deg)';
+                });
+
+                const finish = () => {
+                    rightHalf.removeEventListener('transitionend', finish);
+                    peelContainer.remove();
+                    currentIdx = targetIdx;
+                    isAnimating = false;
+                    goToPage(currentIdx);
+                };
+                rightHalf.addEventListener('transitionend', finish);
+                setTimeout(finish, 700);
+            }
+
+            async function flip(direction) {
+                if (isAnimating) return;
+                if (direction > 0) {
+                    if (currentIdx < pages.length - 1) await animatePeel(1);
+                } else {
+                    if (currentIdx > 0) await animatePeelBackward();
+                }
+            }
+
+            navNext.addEventListener('click', () => flip(1));
+            navPrev.addEventListener('click', () => flip(-1));
+
+            // Keyboard
             document.addEventListener('keydown', e => {
-                if (!flipbookModal.classList.contains('active') || paymentModal.classList.contains('active')) return;
-                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); flipPage(1); }
-                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); flipPage(-1); }
+                if (!fbModal.classList.contains('active') || payModal.classList.contains('active')) return;
+                if (e.key === 'ArrowRight') { e.preventDefault(); flip(1); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); flip(-1); }
             });
 
-            let touchStartX = 0, touchStartY = 0;
-            flipbookStage.addEventListener('touchstart', e => {
-                if (e.touches.length === 1) { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; }
-            }, { passive: true });
-            flipbookStage.addEventListener('touchend', e => {
-                if (isFlipping) return;
-                const dx = (e.changedTouches[0]?.clientX || touchStartX) - touchStartX;
-                const dy = (e.changedTouches[0]?.clientY || touchStartY) - touchStartY;
-                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-                    if (dx < -30) flipPage(1); else if (dx > 30) flipPage(-1);
+            // Touch swipe
+            let touchStartX = 0;
+            fbStage.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+            fbStage.addEventListener('touchend', e => {
+                if (isAnimating) return;
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                if (Math.abs(dx) > 50) {
+                    if (dx < 0) flip(1); else flip(-1);
                 }
             });
-            flipbookStage.addEventListener('click', e => {
-                if (isFlipping || e.target.closest('.page-lock-overlay')) return;
-                const rect = flipbookStage.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                if (x < rect.width/2) flipPage(-1); else flipPage(1);
-            });
-            flipbookStage.addEventListener('wheel', e => {
-                if (!flipbookModal.classList.contains('active') || paymentModal.classList.contains('active') || isFlipping) return;
-                e.preventDefault();
-                if (e.deltaY > 20 || e.deltaX > 20) flipPage(1);
-                else if (e.deltaY < -20 || e.deltaX < -20) flipPage(-1);
-            }, { passive: false });
 
-            function openFlipbook(pdfUrl, bookName, bookKey) {
-                closeModal(paymentModal);
-                openModal(flipbookModal);
-                currentBookName = bookName;
+            // Click on stage halves
+            fbStage.addEventListener('click', e => {
+                if (isAnimating || e.target.closest('.floating-nav') || e.target.closest('.page-peel-animation')) return;
+                const rect = fbStage.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                if (x < rect.width/2) flip(-1); else flip(1);
+            });
+
+            async function openFlipbook(pdfUrl, bookName, bookKey) {
+                closeModal(payModal);
                 currentBookKey = bookKey;
-                flipbookStage.innerHTML = '';
-                flipbookLoading.classList.remove('hidden');
-                flipbookLoading.innerHTML = 'Loading PDF…';
-                fbPrev.disabled = true;
-                fbNext.disabled = true;
-                fbIndicator.textContent = '…';
-                allPages = []; currentPageIndex = 0; renderedCanvases = {}; isFlipping = false;
-                loadFlipbookPDF(pdfUrl, bookKey);
+                currentBookName = bookName;
+                pages = []; currentIdx = 0; isAnimating = false; pdfDoc = null;
+                fbLoading.classList.remove('hidden');
+                pageView.innerHTML = '';
+                openModal(fbModal);
+                try {
+                    pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
+                    const total = pdfDoc.numPages;
+                    for (let i=1; i<=total; i++) pages.push(i);
+                    fbLoading.classList.add('hidden');
+                    goToPage(0);
+                } catch (err) {
+                    fbLoading.innerHTML = '⚠ PDF load error';
+                    console.error(err);
+                }
             }
 
-            // Attach to product cards
-            document.querySelectorAll('.product-card__thumb-wrap').forEach(thumb => {
-                thumb.addEventListener('click', function() {
-                    const pdfUrl = this.getAttribute('data-pdf');
-                    const bookName = this.getAttribute('data-book-name');
-                    const bookKey = (bookName || pdfUrl).replace(/[^a-z0-9]/gi, '-').toLowerCase();
-                    if (pdfUrl) openFlipbook(pdfUrl, bookName, bookKey);
+            // Attach preview & thumbnails
+            document.querySelectorAll('.product-card__thumb-wrap, .preview-btn').forEach(el => {
+                el.addEventListener('click', () => {
+                    const pdf = el.dataset.pdf;
+                    const book = el.dataset.book;
+                    const key = el.dataset.key;
+                    if (pdf) openFlipbook(pdf, book, key);
                 });
             });
-            document.querySelectorAll('.preview-trigger').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+
+            // Donate button -> payment modal
+            document.querySelectorAll('.donate-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const pdfUrl = this.getAttribute('data-pdf');
-                    const bookName = this.getAttribute('data-book-name');
-                    const bookKey = (bookName || pdfUrl).replace(/[^a-z0-9]/gi, '-').toLowerCase();
-                    if (pdfUrl) openFlipbook(pdfUrl, bookName, bookKey);
+                    currentBookName = btn.dataset.book;
+                    currentBookKey = btn.dataset.key;
+                    showPayment();
+                    openModal(payModal);
                 });
             });
 
-            // Donate to Buy buttons
-            document.querySelectorAll('.donate-trigger').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const bookName = this.getAttribute('data-book-name');
-                    const bookKey = this.getAttribute('data-book-key');
-                    currentBookName = bookName;
-                    currentBookKey = bookKey;
-                    renderPaymentInitial();
-                    openModal(paymentModal);
-                });
-            });
-
-            window.addEventListener('resize', () => {
-                clearTimeout(window._resizeDebounce);
-                window._resizeDebounce = setTimeout(() => {
-                    if (flipbookModal.classList.contains('active') && pdfDoc && allPages.length > 0) {
-                        renderedCanvases = {};
-                        renderCurrentSpread();
-                    }
-                }, 400);
-            });
-
-            renderPaymentInitial(); // pre-build initial payment content
-
-            console.log('%c🌿 Tarang Joshi Store %cready', 'font-size:1.2em;color:#4a6a4a;', 'color:#888;');
-            console.log('📖 Flipbook with per‑page locking | 💳 UPI: EKDHARANI.09@cmsidfc');
+            function showPayment() {
+                const body = document.getElementById('payment-body');
+                body.innerHTML = `
+                    <h3>Donate to EkDharani</h3>
+                    <p>Unlock <strong>${currentBookName}</strong></p>
+                    <a href="upi://pay?pa=EKDHARANI.09@cmsidfc&pn=Donation&mode=02" class="btn btn-primary btn-block" style="background:#6c3cc9; margin:1rem 0;">📱 Pay via UPI</a>
+                    <div style="text-align:center; margin:1rem 0;">
+                        <img src="ek.dharani.UPI.png" style="width:140px; border-radius:8px;" onerror="this.style.display='none'">
+                    </div>
+                    <div style="background:var(--bg); padding:1rem; border-radius:8px; margin:1rem 0;">
+                        <p><strong>Bank:</strong> IDFC<br>Acc: 10059271015<br>IFSC: IDFB0040101</p>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="go-shipping">✅ I have donated</button>
+                `;
+                document.getElementById('go-shipping').onclick = () => {
+                    body.innerHTML = `
+                        <h3>Shipping Details</h3>
+                        <p>For <strong>${currentBookName}</strong></p>
+                        <input id="ship-name" placeholder="Full Name" style="width:100%; padding:0.7rem; margin:0.5rem 0;"><br>
+                        <textarea id="ship-addr" placeholder="Address" style="width:100%; padding:0.7rem; margin:0.5rem 0;"></textarea><br>
+                        <input id="ship-phone" placeholder="Phone" style="width:100%; padding:0.7rem; margin:0.5rem 0;"><br>
+                        <button class="btn btn-primary btn-block" id="submit-shipping">Submit & Unlock</button>
+                    `;
+                    document.getElementById('submit-shipping').onclick = () => {
+                        const name = document.getElementById('ship-name').value.trim();
+                        const addr = document.getElementById('ship-addr').value.trim();
+                        const phone = document.getElementById('ship-phone').value.trim();
+                        if (!name || !addr) return toastMsg('Please fill name and address');
+                        window.open(`https://wa.me/91993006169?text=Order%20for%20${encodeURIComponent(currentBookName)}%0A${encodeURIComponent(name)}%0A${encodeURIComponent(addr)}%0A${encodeURIComponent(phone)}`);
+                        unlocked[currentBookKey] = true;
+                        saveUnlocks();
+                        closeModal(payModal);
+                        toastMsg('Unlocked! Thank you.');
+                        if (fbModal.classList.contains('active')) {
+                            goToPage(currentIdx); // refresh lock overlay
+                        }
+                    };
+                };
+            }
         })();
     </script>
-    
 </body>
 </html>
