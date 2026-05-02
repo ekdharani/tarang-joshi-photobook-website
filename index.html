@@ -1,1534 +1,275 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0a0a0a">
-    <meta name="description" content="Tarang Joshi — Photo Books created with 14Trees. Ungreen Scape & Between Shadows.">
-    <title>Tarang Joshi · Photo Books</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tarang Joshi — Photo Books</title>
 
-    <!-- PDF.js from CDN (only external dependency) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
-    </script>
+        <style>
+            /* --- RESET --- */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                background: #fafafa;
+                color: #111;
+                line-height: 1.5;
+            }
 
-    <style>
-        :root {
-            --bg: #fafaf8;
-            --surface: #ffffff;
-            --text: #1a1a1a;
-            --text-secondary: #555555;
-            --text-muted: #888888;
-            --accent: #1a1a1a;
-            --accent-hover: #333333;
-            --border: #e5e5e0;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
-            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15);
-            --radius-sm: 6px;
-            --radius: 10px;
-            --radius-lg: 16px;
-            --font-serif: 'Georgia', 'Times New Roman', 'Noto Serif', serif;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
-            --transition-fast: 0.18s ease-out;
-            --transition-smooth: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-            --transition-cinematic: 0.55s cubic-bezier(0.16, 0.84, 0.44, 1);
-            --max-width: 1100px;
-            --flipbook-perspective: 1800px;
-        }
+            /* --- HERO --- */
+            .hero {
+                height: 80vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                background: #ddd url("hero.jpg") center/cover no-repeat;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+                letter-spacing: 1px;
+            }
+            .hero p {
+                opacity: 0.7;
+                margin-top: 10px;
+            }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #0d0d0c;
-                --surface: #181817;
-                --text: #e8e8e6;
-                --text-secondary: #b0b0ad;
-                --text-muted: #777775;
-                --accent: #e8e8e6;
-                --accent-hover: #ffffff;
-                --border: #2a2a27;
-                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
-                --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
-                --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45);
+            /* --- CONTAINER --- */
+            .container {
+                max-width: 1100px;
+                margin: auto;
+                padding: 20px;
             }
-        }
 
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-            font-size: 16px;
-        }
-
-        body {
-            font-family: var(--font-sans);
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            transition: background var(--transition-smooth), color var(--transition-smooth);
-            overflow-x: hidden;
-        }
-
-        /* ── Typography ───────────────────── */
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-family: var(--font-serif);
-            font-weight: 400;
-            letter-spacing: -0.01em;
-            line-height: 1.2;
-        }
-        h1 {
-            font-size: clamp(1.6rem, 4vw, 2.6rem);
-        }
-        h2 {
-            font-size: clamp(1.25rem, 3vw, 1.8rem);
-        }
-        h3 {
-            font-size: clamp(1rem, 2.2vw, 1.3rem);
-        }
-        p {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-        .text-muted {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        /* ── Layout ──────────────────────── */
-        .container {
-            width: 100%;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 clamp(12px, 3vw, 28px);
-        }
-
-        /* ── Hero ────────────────────────── */
-        .hero {
-            position: relative;
-            width: 100%;
-            min-height: 55vh;
-            min-height: 55dvh;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            background: linear-gradient(160deg, #1c1c1a 0%, #2a2a26 30%, #3a3a34 60%, #1c1c1a 100%);
-            overflow: hidden;
-            padding: 2rem 1rem 3rem;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 70%, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            max-width: 650px;
-        }
-        .hero-content h1 {
-            color: #f0f0eb;
-            font-size: clamp(1.8rem, 5vw, 3rem);
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-        .hero-content .subtitle {
-            color: #c5c5be;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            font-weight: 300;
-            font-family: var(--font-serif);
-            font-style: italic;
-        }
-        .hero-content .byline {
-            color: #999990;
-            font-size: 0.85rem;
-            margin-top: 0.6rem;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-        }
-        .hero-placeholder {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            opacity: 0.25;
-            background:
-                radial-gradient(circle at 30% 40%, rgba(180, 170, 150, 0.5) 0%, transparent 50%),
-                radial-gradient(circle at 70% 55%, rgba(160, 150, 130, 0.35) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(200, 190, 170, 0.3) 0%, transparent 45%);
-            filter: blur(3px);
-        }
-
-        /* ── Sections ────────────────────── */
-        .section {
-            padding: 2.5rem 0;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .section-header h2 {
-            margin-bottom: 0.3rem;
-        }
-        .section-header .section-rule {
-            display: block;
-            width: 50px;
-            height: 2px;
-            background: var(--border);
-            margin: 0.8rem auto 0;
-            border-radius: 1px;
-        }
-
-        /* ── Product Cards ──────────────── */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-            gap: clamp(16px, 3vw, 28px);
-            align-items: start;
-        }
-        .product-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: box-shadow var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-smooth);
-            cursor: default;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .product-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-3px);
-            border-color: #ccc;
-        }
-        @media (prefers-color-scheme: dark) {
-            .product-card:hover {
-                border-color: #444;
-            }
-        }
-        .product-card__thumb-wrap {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4/3;
-            overflow: hidden;
-            background: #e8e8e3;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        @media (prefers-color-scheme: dark) {
-            .product-card__thumb-wrap {
-                background: #20201e;
-            }
-        }
-        .product-card__thumb-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform var(--transition-cinematic);
-            will-change: transform;
-        }
-        .product-card__thumb-wrap:hover img {
-            transform: scale(1.04);
-        }
-        .product-card__thumb-wrap .thumb-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.0);
-            transition: background var(--transition-smooth);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-        }
-        .product-card__thumb-wrap:hover .thumb-overlay {
-            background: rgba(0, 0, 0, 0.18);
-        }
-        .thumb-overlay-icon {
-            opacity: 0;
-            transform: translateY(8px);
-            transition: opacity var(--transition-smooth), transform var(--transition-smooth);
-            color: #fff;
-            font-size: 2.2rem;
-            pointer-events: none;
-        }
-        .product-card__thumb-wrap:hover .thumb-overlay-icon {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .product-card__body {
-            padding: 1.1rem 1.2rem 1.3rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            gap: 0.5rem;
-        }
-        .product-card__body h3 {
-            font-family: var(--font-serif);
-            font-size: 1.15rem;
-            margin: 0;
-            letter-spacing: -0.01em;
-        }
-        .product-card__body .book-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .product-card__body p {
-            font-size: 0.88rem;
-            color: var(--text-secondary);
-            flex-grow: 1;
-            margin: 0;
-        }
-        .product-card__actions {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-            margin-top: 0.4rem;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            padding: 0.6rem 1.1rem;
-            font-size: 0.88rem;
-            font-weight: 500;
-            border-radius: 50px;
-            border: 1.5px solid transparent;
-            cursor: pointer;
-            text-decoration: none;
-            font-family: var(--font-sans);
-            transition: all var(--transition-fast);
-            white-space: nowrap;
-            letter-spacing: 0.01em;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        .btn-primary {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            border-color: var(--accent-hover);
-            box-shadow: var(--shadow-sm);
-        }
-        .btn-outline {
-            background: transparent;
-            color: var(--accent);
-            border-color: var(--border);
-        }
-        .btn-outline:hover {
-            border-color: var(--accent);
-            background: rgba(0, 0, 0, 0.03);
-        }
-        @media (prefers-color-scheme: dark) {
-            .btn-outline:hover {
-                background: rgba(255, 255, 255, 0.04);
-            }
-            .btn-primary {
-                background: #e8e8e6;
-                color: #1a1a1a;
-                border-color: #e8e8e6;
-            }
-            .btn-primary:hover {
-                background: #fff;
-                border-color: #fff;
-            }
-        }
-        .btn-whatsapp {
-            background: #25D366;
-            color: #fff;
-            border-color: #25D366;
-        }
-        .btn-whatsapp:hover {
-            background: #1fb855;
-            border-color: #1fb855;
-            box-shadow: 0 2px 10px rgba(37, 211, 102, 0.3);
-        }
-        .btn-sm {
-            padding: 0.45rem 0.85rem;
-            font-size: 0.8rem;
-            border-radius: 40px;
-        }
-        .btn-icon {
-            width: 1em;
-            height: 1em;
-            flex-shrink: 0;
-        }
-
-        /* ── Placeholder Sections ────────── */
-        .placeholder-section {
-            background: var(--surface);
-            border: 1.5px dashed var(--border);
-            border-radius: var(--radius-lg);
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-            color: var(--text-muted);
-            transition: all var(--transition-smooth);
-        }
-        .placeholder-section h3 {
-            color: var(--text-secondary);
-            margin-bottom: 0.4rem;
-        }
-        .placeholder-section .icon-placeholder {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 0.6rem;
-            opacity: 0.5;
-        }
-
-        /* ── Footer ──────────────────────── */
-        .site-footer {
-            margin-top: auto;
-            padding: 1.8rem 0;
-            text-align: center;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-        .site-footer a {
-            color: var(--text-secondary);
-            text-decoration: underline;
-            text-underline-offset: 3px;
-        }
-
-        /* ── MODALS ──────────────────────── */
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity var(--transition-cinematic);
-            -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
-            padding: 12px;
-        }
-        .modal-backdrop.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .modal-panel {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            width: 100%;
-            max-width: 520px;
-            max-height: 90vh;
-            max-height: 90dvh;
-            overflow-y: auto;
-            position: relative;
-            transform: translateY(25px) scale(0.96);
-            transition: transform var(--transition-cinematic);
-            display: flex;
-            flex-direction: column;
-        }
-        .modal-backdrop.active .modal-panel {
-            transform: translateY(0) scale(1);
-        }
-        .modal-panel.flipbook-panel {
-            max-width: 95vw;
-            max-width: 95dvw;
-            width: 100%;
-            max-height: 94vh;
-            max-height: 94dvh;
-            height: auto;
-            aspect-ratio: auto;
-            border-radius: var(--radius);
-        }
-        .modal-close {
-            position: absolute;
-            top: 10px;
-            right: 14px;
-            z-index: 20;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-fast);
-            -webkit-tap-highlight-color: transparent;
-            line-height: 1;
-        }
-        .modal-close:hover {
-            background: rgba(0, 0, 0, 0.75);
-            transform: scale(1.08);
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .modal-body h3 {
-            margin-bottom: 0.8rem;
-        }
-        .modal-body .detail-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            align-items: baseline;
-            margin-bottom: 0.55rem;
-            font-size: 0.9rem;
-        }
-        .modal-body .detail-label {
-            font-weight: 600;
-            min-width: 80px;
-            color: var(--text);
-        }
-        .modal-body .detail-value {
-            color: var(--text-secondary);
-            word-break: break-all;
-        }
-        .qr-img {
-            width: 160px;
-            height: 160px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            object-fit: contain;
-            background: #fff;
-            display: block;
-            margin: 0.8rem 0;
-        }
-        .btn-block {
-            width: 100%;
-            justify-content: center;
-            padding: 0.75rem 1.2rem;
-            font-size: 0.95rem;
-            margin-top: 0.4rem;
-        }
-        .btn-upi {
-            background: #6c3cc9;
-            color: #fff;
-            border-color: #6c3cc9;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-        }
-        .btn-upi:hover {
-            background: #5a2fb8;
-            border-color: #5a2fb8;
-            box-shadow: 0 3px 14px rgba(108, 60, 201, 0.35);
-        }
-        .divider-text {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin: 1rem 0;
-        }
-        .divider-text::before,
-        .divider-text::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        /* ── FLIPBOOK ────────────────────── */
-        .flipbook-container {
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background: #1a1a18;
-            border-radius: var(--radius);
-            overflow: hidden;
-            min-height: 350px;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-        }
-        .flipbook-stage {
-            perspective: var(--flipbook-perspective);
-            -webkit-perspective: var(--flipbook-perspective);
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            position: relative;
-            flex-grow: 1;
-            min-height: 380px;
-        }
-        .flipbook-spread {
-            display: flex;
-            position: relative;
-            transform-style: preserve-3d;
-            -webkit-transform-style: preserve-3d;
-            transition: none;
-        }
-        .flipbook-page-wrapper {
-            position: relative;
-            transform-style: preserve-3d;
-            -webkit-transform-style: preserve-3d;
-            flex-shrink: 0;
-            background: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-            border-radius: 2px 4px 4px 2px;
-            overflow: hidden;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .flipbook-page-wrapper.flipping {
-            transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
-            z-index: 10;
-        }
-        .flipbook-page-wrapper .page-front,
-        .flipbook-page-wrapper .page-back {
-            position: absolute;
-            inset: 0;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-        }
-        .flipbook-page-wrapper .page-back {
-            transform: rotateY(180deg);
-            -webkit-transform: rotateY(180deg);
-        }
-        .flipbook-page-wrapper canvas {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-            pointer-events: none;
-        }
-        .flipbook-nav {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 18px;
-            padding: 10px 16px;
-            background: #111;
-            color: #ccc;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-        .flipbook-nav button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            border-radius: 50px;
-            padding: 0.45rem 1rem;
-            cursor: pointer;
-            font-size: 0.82rem;
-            transition: all var(--transition-fast);
-            -webkit-tap-highlight-color: transparent;
-            white-space: nowrap;
-        }
-        .flipbook-nav button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .flipbook-nav button:disabled {
-            opacity: 0.3;
-            pointer-events: none;
-        }
-        .flipbook-nav .page-indicator {
-            font-variant-numeric: tabular-nums;
-            font-family: var(--font-sans);
-            min-width: 60px;
-            text-align: center;
-        }
-        .flipbook-loading {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(26, 26, 24, 0.9);
-            z-index: 5;
-            color: #ccc;
-            font-size: 1rem;
-            pointer-events: none;
-            transition: opacity 0.4s;
-        }
-        .flipbook-loading.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* ── Overlay on Flipbook ────────── */
-        .flipbook-gate-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 15;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            padding: 2rem;
-            text-align: center;
-            transition: opacity var(--transition-cinematic);
-            border-radius: var(--radius);
-        }
-        .flipbook-gate-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .flipbook-gate-overlay .gate-text {
-            color: #fff;
-            font-family: var(--font-serif);
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
-            font-weight: 400;
-            letter-spacing: 0.01em;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-            max-width: 320px;
-        }
-        .flipbook-gate-overlay .gate-cta {
-            background: #fff;
-            color: #1a1a1a;
-            border: none;
-            padding: 0.7rem 1.8rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            letter-spacing: 0.02em;
-            transition: all var(--transition-fast);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .flipbook-gate-overlay .gate-cta:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
-        }
-
-        /* ── Toast ───────────────────────── */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: #1a1a1a;
-            color: #fff;
-            padding: 0.7rem 1.4rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            z-index: 2000;
-            pointer-events: none;
-            opacity: 0;
-            transition: all var(--transition-smooth);
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-            max-width: 90vw;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* ── Responsive ──────────────────── */
-        @media (max-width: 768px) {
-            .flipbook-stage {
-                min-height: 280px;
-                padding: 8px;
-            }
-            .flipbook-container {
-                min-height: 280px;
-            }
-            .flipbook-nav {
-                gap: 8px;
-                padding: 8px 10px;
-                font-size: 0.78rem;
-            }
-            .flipbook-nav button {
-                padding: 0.35rem 0.7rem;
-                font-size: 0.75rem;
-            }
-            .modal-panel.flipbook-panel {
-                max-width: 98vw;
-                max-width: 98dvw;
-                border-radius: var(--radius-sm);
-            }
-            .modal-close {
-                top: 6px;
-                right: 8px;
-                width: 30px;
-                height: 30px;
-                font-size: 1rem;
-            }
-        }
-        @media (max-width: 380px) {
-            .flipbook-stage {
-                min-height: 220px;
-                padding: 4px;
-            }
-            .flipbook-container {
-                min-height: 220px;
-            }
-            .flipbook-nav {
-                gap: 4px;
-                padding: 6px;
-            }
-            .flipbook-nav button {
-                padding: 0.3rem 0.55rem;
-                font-size: 0.7rem;
-            }
-            .flipbook-gate-overlay .gate-text {
-                font-size: 0.9rem;
-            }
-            .flipbook-gate-overlay .gate-cta {
-                padding: 0.5rem 1.2rem;
-                font-size: 0.8rem;
-            }
-            .product-grid {
+            /* --- GRID --- */
+            .grid {
+                display: grid;
                 grid-template-columns: 1fr;
-                gap: 14px;
+                gap: 20px;
             }
-        }
-        @media (min-width: 1400px) {
-            .flipbook-stage {
-                min-height: 520px;
+
+            @media (min-width: 600px) {
+                .grid {
+                    grid-template-columns: 1fr 1fr;
+                }
             }
-            .flipbook-container {
-                min-height: 520px;
+            @media (min-width: 1000px) {
+                .grid {
+                    grid-template-columns: 1fr 1fr 1fr;
+                }
             }
-            .modal-panel.flipbook-panel {
-                max-width: 75vw;
-                max-width: 75dvw;
+
+            /* --- CARD --- */
+            .card {
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+                transition: transform 0.2s;
             }
-        }
-        @media (max-width: 240px) {
-            .flipbook-stage {
-                min-height: 150px;
+            .card:hover {
+                transform: translateY(-4px);
             }
-            .flipbook-container {
-                min-height: 150px;
+
+            .card img {
+                width: 100%;
+                display: block;
             }
-            .flipbook-nav button {
-                padding: 0.2rem 0.4rem;
-                font-size: 0.6rem;
+
+            .card-content {
+                padding: 15px;
             }
+
+            .card h3 {
+                margin-bottom: 5px;
+            }
+            .card p {
+                font-size: 0.9rem;
+                opacity: 0.6;
+            }
+
+            .price {
+                margin: 10px 0;
+                font-weight: bold;
+            }
+
+            /* --- BUTTONS --- */
             .btn {
-                padding: 0.35rem 0.6rem;
-                font-size: 0.7rem;
+                display: inline-block;
+                padding: 10px 14px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-size: 0.9rem;
+                margin-right: 8px;
             }
-        }
-    </style>
-</head>
-<body>
 
-    <!-- ═══════════ HERO ═══════════ -->
-    <header class="hero">
-        <div class="hero-placeholder" aria-hidden="true"></div>
-        <div class="hero-content">
-            <h1>Tarang Joshi</h1>
-            <p class="subtitle">Photo Books · created with 14Trees</p>
-            <p class="byline">Ungreen Scape &amp; Between Shadows</p>
-        </div>
-    </header>
+            .btn-preview {
+                background: #111;
+                color: white;
+            }
 
-    <!-- ═══════════ PRODUCTS ═══════════ -->
-    <main class="container section" id="store">
-        <div class="section-header">
-            <h2>The Books</h2>
-            <span class="section-rule"></span>
-            <p class="text-muted" style="margin-top:0.4rem;">Physical photo books — preview gated, unlock with a donation to EkDharani</p>
-        </div>
+            .btn-order {
+                background: #25d366;
+                color: white;
+            }
 
-        <div class="product-grid">
-            <!-- Book 1: Ungreen Scape -->
-            <article class="product-card" data-book="ungreen-scape">
-                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book-name="Ungreen Scape" aria-label="Preview Ungreen Scape">
-                    <img src="tarang.joshi-2509-ungreen-scape.jpg"
-                    alt="Ungreen Scape cover"
-                    loading="lazy"
-                    onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#3a4a3a,#5a6a4a)';">
-                    <div class="thumb-overlay"><span class="thumb-overlay-icon">📖</span></div>
+            /* --- MODAL --- */
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .modal.active {
+                display: flex;
+            }
+
+            .modal-content {
+                width: 90%;
+                height: 90%;
+                background: #000;
+                position: relative;
+            }
+
+            .close {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                font-size: 28px;
+                color: white;
+                cursor: pointer;
+            }
+
+            /* --- ABOUT --- */
+            .about {
+                margin-top: 60px;
+                text-align: center;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+                opacity: 0.7;
+            }
+
+            /* --- FOOTER --- */
+            footer {
+                text-align: center;
+                padding: 40px 20px;
+                font-size: 0.8rem;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- HERO -->
+        <section class="hero">
+            <div>
+                <h1>Tarang Joshi</h1>
+                <p>Between material and memory</p>
+            </div>
+        </section>
+
+        <!-- STORE -->
+        <div class="container">
+            <div class="grid">
+                <!-- BOOK 1 -->
+                <div class="card">
+                    <img src="tarang.joshi-2509-ungreen-scape.jpg" alt="" />
+                    <div class="card-content">
+                        <h3>Ungreen Scape</h3>
+                        <p>A study of altered landscapes</p>
+                        <div class="price">₹XXXX</div>
+
+                        <a
+                            href="#"
+                            class="btn btn-preview"
+                            onclick="
+                                openBook('tarang.joshi-2509-ungreen-scape.pdf')
+                            "
+                        >
+                            Preview
+                        </a>
+
+                        <a
+                            class="btn btn-order"
+                            href="https://wa.me/919930061691?text=I%20want%20to%20order%20Ungreen%20Scape"
+                        >
+                            Order
+                        </a>
+                    </div>
                 </div>
-                <div class="product-card__body">
-                    <span class="book-subtitle">Book 1</span>
-                    <h3>Ungreen Scape</h3>
-                    <p>Exploring the tension between the natural and the constructed — a meditation on landscapes that resist easy categorization.</p>
-                    <div class="product-card__actions">
-                        <button class="btn btn-outline btn-sm preview-trigger" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book-name="Ungreen Scape">Preview</button>
-                        <a class="btn btn-whatsapp btn-sm"
-                        href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20your%20photo%20book%20*Ungreen%20Scape*.%20Please%20share%20details."
-                    target="_blank" rel="noopener">Order via WhatsApp</a>
+
+                <!-- BOOK 2 -->
+                <div class="card">
+                    <img src="tarang.joshi-2503-between-shadows.jpg" alt="" />
+                    <div class="card-content">
+                        <h3>Between Shadows</h3>
+                        <p>Light, absence, and form</p>
+                        <div class="price">₹XXXX</div>
+
+                        <a
+                            href="#"
+                            class="btn btn-preview"
+                            onclick="
+                                openBook(
+                                    'tarang.joshi-2503-between-shadows.pdf',
+                                )
+                            "
+                        >
+                            Preview
+                        </a>
+
+                        <a
+                            class="btn btn-order"
+                            href="https://wa.me/919930061691?text=I%20want%20to%20order%20Between%20Shadows"
+                        >
+                            Order
+                        </a>
+                    </div>
                 </div>
             </div>
-        </article>
 
-        <!-- Book 2: Between Shadows -->
-        <article class="product-card" data-book="between-shadows">
-            <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book-name="Between Shadows" aria-label="Preview Between Shadows">
-                <img src="tarang.joshi-2503-between-shadows.jpg"
-                alt="Between Shadows cover"
-                loading="lazy"
-                onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#2a2a3a,#3a3a4a)';">
-                <div class="thumb-overlay"><span class="thumb-overlay-icon">📖</span></div>
-            </div>
-            <div class="product-card__body">
-                <span class="book-subtitle">Book 2</span>
-                <h3>Between Shadows</h3>
-                <p>Where light falters and form dissolves — a visual journey through the liminal spaces between presence and absence.</p>
-                <div class="product-card__actions">
-                    <button class="btn btn-outline btn-sm preview-trigger" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book-name="Between Shadows">Preview</button>
-                    <a class="btn btn-whatsapp btn-sm"
-                    href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20your%20photo%20book%20*Between%20Shadows*.%20Please%20share%20details."
-                target="_blank" rel="noopener">Order via WhatsApp</a>
+            <!-- ABOUT -->
+            <div class="about">
+                <p>
+                    These works emerge from an ongoing engagement with material,
+                    landscape, and construction through collaborations with
+                    14Trees.
+                </p>
             </div>
         </div>
-    </article>
-</div>
-</main>
 
-<!-- ═══════════ VIDEO PLACEHOLDER ═══════════ -->
-<section class="container section" id="video">
-    <div class="section-header">
-        <h2>Video</h2>
-        <span class="section-rule"></span>
-    </div>
-    <div class="placeholder-section">
-        <span class="icon-placeholder">🎬</span>
-        <h3>Coming Soon</h3>
-        <p>A short film exploring the stories behind the photographs.</p>
-    </div>
-</section>
-
-<!-- ═══════════ STORIES PLACEHOLDER ═══════════ -->
-<section class="container section" id="stories">
-    <div class="section-header">
-        <h2>Stories</h2>
-        <span class="section-rule"></span>
-    </div>
-    <div class="placeholder-section">
-        <span class="icon-placeholder">📝</span>
-        <h3>Blog · Coming Soon</h3>
-        <p>Behind-the-scenes narratives, field notes, and reflections from the making of these books.</p>
-    </div>
-</section>
-
-<!-- ═══════════ FOOTER ═══════════ -->
-<footer class="site-footer">
-    <div class="container">
-        <p>&copy; 2025 Tarang Joshi · Photos created with <a href="#">14Trees</a> · All rights reserved.</p>
-        <p style="margin-top:0.3rem;">Support <strong>EkDharani</strong> — every donation helps sustain the work.</p>
-    </div>
-</footer>
-
-<!-- ═══════════ FLIPBOOK MODAL ═══════════ -->
-<div class="modal-backdrop" id="flipbook-modal" aria-hidden="true">
-    <div class="modal-panel flipbook-panel" role="dialog" aria-modal="true" aria-label="Flipbook Preview">
-        <button class="modal-close" id="flipbook-close" aria-label="Close flipbook">&times;</button>
-        <div class="flipbook-container" id="flipbook-container">
-            <div class="flipbook-loading" id="flipbook-loading">Loading PDF…</div>
-            <div class="flipbook-stage" id="flipbook-stage"></div>
-            <div class="flipbook-gate-overlay" id="flipbook-gate-overlay">
-                <p class="gate-text">Donate to EkDharani to get the complete book</p>
-                <button class="gate-cta" id="gate-cta-btn">Donate &amp; Unlock</button>
+        <!-- MODAL -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeBook()">&times;</span>
+                <iframe id="pdfViewer" width="100%" height="100%"></iframe>
             </div>
-            <nav class="flipbook-nav">
-                <button id="fb-prev" aria-label="Previous page">← Prev</button>
-                <span class="page-indicator" id="fb-indicator">1 / 10</span>
-                <button id="fb-next" aria-label="Next page">Next →</button>
-            </nav>
         </div>
-    </div>
-</div>
 
-<!-- ═══════════ PAYMENT MODAL ═══════════ -->
-<div class="modal-backdrop" id="payment-modal" aria-hidden="true">
-    <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Payment Options">
-        <button class="modal-close" id="payment-close" aria-label="Close payment">&times;</button>
-        <div class="modal-body">
-            <h3>Donate to EkDharani</h3>
-            <p style="margin-bottom:1rem;">Your donation helps unlock the complete book. Choose any method below.</p>
+        <!-- FOOTER -->
+        <footer>© Tarang Joshi</footer>
 
-            <!-- UPI -->
-            <a id="upi-link"
-            href="upi://pay?pa=EKDHARANI.09@cmsidfc&pn=Donation%20to%20EkDharani&mode=02&am="
-        class="btn btn-upi btn-block"
-        target="_blank" rel="noopener">
-        📱 Tap to Pay via UPI
-    </a>
-    <p class="text-muted" style="text-align:center;margin-top:0.3rem;">Opens your UPI app instantly</p>
-
-    <div class="divider-text">or scan QR</div>
-
-    <!-- QR Code -->
-    <div style="text-align:center;">
-        <img src="ek.dharani.UPI.png"
-        alt="EkDharani UPI QR Code"
-        class="qr-img"
-        loading="lazy"
-        onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<p class=text-muted style=text-align:center;>QR image not available — use UPI link or bank details below.</p>');">
-        <p class="text-muted">Scan this QR with any UPI app</p>
-    </div>
-
-    <div class="divider-text">bank details</div>
-
-    <!-- Bank Details -->
-    <div style="background:var(--bg);border-radius:var(--radius-sm);padding:1rem;border:1px solid var(--border);">
-        <div class="detail-row"><span class="detail-label">Account:</span><span class="detail-value">10059271015</span></div>
-        <div class="detail-row"><span class="detail-label">IFSC:</span><span class="detail-value">IDFB0040101</span></div>
-        <div class="detail-row"><span class="detail-label">Bank:</span><span class="detail-value">IDFC</span></div>
-        <div class="detail-row"><span class="detail-label">Beneficiary:</span><span class="detail-value">EkDharani</span></div>
-    </div>
-
-    <button class="btn btn-primary btn-block" id="donated-confirm-btn" style="margin-top:1.2rem;">
-        ✅ I have donated — Unlock the Book
-    </button>
-    <p class="text-muted" style="text-align:center;margin-top:0.4rem;">After your donation completes, click above to unlock.</p>
-</div>
-</div>
-</div>
-
-<!-- ═══════════ TOAST ═══════════ -->
-<div class="toast" id="toast" aria-live="polite"></div>
-
-<!-- ═══════════ SCRIPTS ═══════════ -->
-<script>
-    (function() {
-        // ── Set PDF.js worker ──
-        if (typeof pdfjsLib !== 'undefined') {
-            pdfjsLib.GlobalWorkerOptions.workerSrc =
-                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
-
-        // ── DOM refs ──
-        const flipbookModal = document.getElementById('flipbook-modal');
-        const flipbookClose = document.getElementById('flipbook-close');
-        const flipbookStage = document.getElementById('flipbook-stage');
-        const flipbookLoading = document.getElementById('flipbook-loading');
-        const flipbookGateOverlay = document.getElementById('flipbook-gate-overlay');
-        const gateCtaBtn = document.getElementById('gate-cta-btn');
-        const fbPrev = document.getElementById('fb-prev');
-        const fbNext = document.getElementById('fb-next');
-        const fbIndicator = document.getElementById('fb-indicator');
-        const paymentModal = document.getElementById('payment-modal');
-        const paymentClose = document.getElementById('payment-close');
-        const donatedConfirmBtn = document.getElementById('donated-confirm-btn');
-        const toast = document.getElementById('toast');
-        const upiLink = document.getElementById('upi-link');
-
-        // ── State ──
-        let currentPdfUrl = null;
-        let currentBookKey = null;
-        let pdfDoc = null;
-        let accessiblePages = []; // array of 1-based page numbers
-        let currentAccessibleIndex = 0; // index into accessiblePages
-        let isFlipping = false;
-        let unlockedBooks = {}; // stored in localStorage
-        let renderedCanvases = {}; // cache: key "pageNum" -> canvas element
-        const PREVIEW_FIRST_N = 5;
-        const PREVIEW_LAST_N = 5;
-
-        // ── Init localStorage ──
-        try {
-            const stored = localStorage.getItem('ekdharani_unlocked_books');
-            if (stored) unlockedBooks = JSON.parse(stored);
-        } catch (e) { /* ignore */ }
-
-        function saveUnlockedBooks() {
-            try {
-                localStorage.setItem('ekdharani_unlocked_books', JSON.stringify(unlockedBooks));
-            } catch (e) { /* ignore */ }
-        }
-
-        // ── Toast ──
-        let toastTimer;
-
-        function showToast(msg) {
-            clearTimeout(toastTimer);
-            toast.textContent = msg;
-            toast.classList.add('show');
-            toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        // ── Modal helpers ──
-        function openModal(modal) {
-            modal.setAttribute('aria-hidden', 'false');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal(modal) {
-            modal.setAttribute('aria-hidden', 'true');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function closeAllModals() {
-            closeModal(flipbookModal);
-            closeModal(paymentModal);
-        }
-
-        flipbookClose.addEventListener('click', () => closeModal(flipbookModal));
-        paymentClose.addEventListener('click', () => closeModal(paymentModal));
-
-        // Close modals on backdrop click
-        flipbookModal.addEventListener('click', function(e) {
-            if (e.target === flipbookModal) closeModal(flipbookModal);
-        });
-        paymentModal.addEventListener('click', function(e) {
-            if (e.target === paymentModal) closeModal(paymentModal);
-        });
-
-        // Close on Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                if (paymentModal.classList.contains('active')) {
-                    closeModal(paymentModal);
-                } else if (flipbookModal.classList.contains('active')) {
-                    closeModal(flipbookModal);
-                }
-            }
-        });
-
-        // ── UPI auto-detect: prioritize UPI link on mobile ──
-        function isMobileDevice() {
-            return /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) ||
-                ('ontouchstart' in window && window.innerWidth < 1024);
-        }
-        // Adjust UPI link behavior
-        upiLink.addEventListener('click', function(e) {
-            if (!isMobileDevice()) {
-                // On desktop, UPI link likely won't work; show QR prominently
-                e.preventDefault();
-                // Scroll payment modal to QR section
-                const qrImg = paymentModal.querySelector('.qr-img');
-                if (qrImg) qrImg.scrollIntoView({ behavior: 'smooth' });
-                showToast('On desktop, please scan the QR code or use bank details');
-            }
-            // On mobile, let the upi:// link open naturally
-        });
-
-        // ── Payment modal → "I have donated" ──
-        donatedConfirmBtn.addEventListener('click', function() {
-            if (currentBookKey) {
-                unlockedBooks[currentBookKey] = true;
-                saveUnlockedBooks();
-                // Hide gate overlay
-                flipbookGateOverlay.classList.add('hidden');
-                // Reload flipbook with all pages accessible
-                if (currentPdfUrl) {
-                    loadFlipbookPDF(currentPdfUrl, currentBookKey, true);
-                }
-                closeModal(paymentModal);
-                showToast('🎉 Book unlocked! Enjoy the complete preview.');
-            }
-        });
-
-        // ── Gate CTA button → opens payment modal ──
-        gateCtaBtn.addEventListener('click', function() {
-            openModal(paymentModal);
-        });
-
-        // ── Flipbook: load PDF ──
-        async function loadFlipbookPDF(pdfUrl, bookKey, forceUnlocked = false) {
-            currentPdfUrl = pdfUrl;
-            currentBookKey = bookKey;
-            accessiblePages = [];
-            currentAccessibleIndex = 0;
-            renderedCanvases = {};
-            pdfDoc = null;
-            flipbookStage.innerHTML = '';
-            flipbookLoading.classList.remove('hidden');
-            fbPrev.disabled = true;
-            fbNext.disabled = true;
-            fbIndicator.textContent = '…';
-
-            const isUnlocked = forceUnlocked || !!unlockedBooks[bookKey];
-
-            try {
-                if (typeof pdfjsLib === 'undefined') {
-                    throw new Error('PDF.js not loaded. Please check your internet connection.');
-                }
-                const loadingTask = pdfjsLib.getDocument(pdfUrl);
-                pdfDoc = await loadingTask.promise;
-                const totalPages = pdfDoc.numPages;
-
-                if (isUnlocked || totalPages <= PREVIEW_FIRST_N + PREVIEW_LAST_N) {
-                    // Show all pages
-                    for (let i = 1; i <= totalPages; i++) {
-                        accessiblePages.push(i);
-                    }
-                    flipbookGateOverlay.classList.add('hidden');
-                } else {
-                    // First 5 + last 5
-                    for (let i = 1; i <= Math.min(PREVIEW_FIRST_N, totalPages); i++) {
-                        accessiblePages.push(i);
-                    }
-                    const lastStart = Math.max(PREVIEW_FIRST_N + 1, totalPages - PREVIEW_LAST_N + 1);
-                    for (let i = lastStart; i <= totalPages; i++) {
-                        if (!accessiblePages.includes(i)) {
-                            accessiblePages.push(i);
-                        }
-                    }
-                    // Show gate overlay
-                    flipbookGateOverlay.classList.remove('hidden');
-                }
-
-                flipbookLoading.classList.add('hidden');
-                fbPrev.disabled = true; // at first page
-                fbNext.disabled = accessiblePages.length <= 1;
-                updateIndicator();
-                await renderCurrentSpread();
-
-            } catch (err) {
-                console.error('Flipbook load error:', err);
-                flipbookLoading.innerHTML =
-                    '<span style="color:#e88;">⚠ Failed to load PDF.</span><br><small style="color:#aaa;">Check file path or network.</small>';
-                flipbookLoading.classList.remove('hidden');
-                showToast('Failed to load PDF. Check console for details.');
-            }
-        }
-
-        function updateIndicator() {
-            if (accessiblePages.length === 0) {
-                fbIndicator.textContent = '0 / 0';
-                return;
-            }
-            const displayNum = currentAccessibleIndex + 1;
-            fbIndicator.textContent = displayNum + ' / ' + accessiblePages.length;
-        }
-
-        // ── Render a single page to canvas (with cache) ──
-        async function renderPageToCanvas(pageNum) {
-            if (!pdfDoc) return null;
-            const cacheKey = 'p' + pageNum;
-            if (renderedCanvases[cacheKey]) {
-                return renderedCanvases[cacheKey].cloneNode(true);
-            }
-            try {
-                const page = await pdfDoc.getPage(pageNum);
-                const viewport = page.getViewport({ scale: 1.0 });
-                // Determine a reasonable scale for rendering
-                const stageWidth = flipbookStage.clientWidth || 400;
-                const stageHeight = flipbookStage.clientHeight || 500;
-                const isWide = stageWidth >= 600;
-                const maxWidth = isWide ? (stageWidth * 0.45) : (stageWidth * 0.85);
-                const maxHeight = stageHeight * 0.85;
-                const scaleW = maxWidth / viewport.width;
-                const scaleH = maxHeight / viewport.height;
-                const scale = Math.min(scaleW, scaleH, 2.5); // cap at 2.5x for performance
-                const scaledViewport = page.getViewport({ scale: scale });
-
-                const canvas = document.createElement('canvas');
-                canvas.width = scaledViewport.width;
-                canvas.height = scaledViewport.height;
-                const ctx = canvas.getContext('2d');
-                await page.render({
-                    canvasContext: ctx,
-                    viewport: scaledViewport,
-                }).promise;
-                renderedCanvases[cacheKey] = canvas.cloneNode(true);
-                return canvas;
-            } catch (err) {
-                console.warn('Failed to render page', pageNum, err);
-                const fallback = document.createElement('canvas');
-                fallback.width = 200;
-                fallback.height = 280;
-                const fctx = fallback.getContext('2d');
-                fctx.fillStyle = '#e0e0dc';
-                fctx.fillRect(0, 0, 200, 280);
-                fctx.fillStyle = '#999';
-                fctx.font = '14px sans-serif';
-                fctx.textAlign = 'center';
-                fctx.fillText('Page ' + pageNum, 100, 140);
-                return fallback;
-            }
-        }
-
-        // Preload adjacent pages
-        async function preloadAdjacent() {
-            const toPreload = [];
-            const prevIdx = currentAccessibleIndex - 1;
-            const nextIdx = currentAccessibleIndex + 1;
-            const nextNextIdx = currentAccessibleIndex + 2;
-            if (prevIdx >= 0) toPreload.push(accessiblePages[prevIdx]);
-            if (nextIdx < accessiblePages.length) toPreload.push(accessiblePages[nextIdx]);
-            if (nextNextIdx < accessiblePages.length) toPreload.push(accessiblePages[nextNextIdx]);
-            for (const pn of toPreload) {
-                const cacheKey = 'p' + pn;
-                if (!renderedCanvases[cacheKey]) {
-                    try { await renderPageToCanvas(pn); } catch (e) { /* ignore */ }
-                }
-            }
-        }
-
-        // ── Render current spread ──
-        async function renderCurrentSpread() {
-            if (accessiblePages.length === 0 || !pdfDoc) return;
-            flipbookStage.innerHTML = '';
-            const pageNum = accessiblePages[currentAccessibleIndex];
-            const canvas = await renderPageToCanvas(pageNum);
-            if (!canvas) return;
-
-            const wrapper = document.createElement('div');
-            wrapper.className = 'flipbook-page-wrapper';
-            wrapper.style.width = canvas.width + 'px';
-            wrapper.style.height = canvas.height + 'px';
-            wrapper.setAttribute('data-page-num', pageNum);
-
-            const front = document.createElement('div');
-            front.className = 'page-front';
-            front.appendChild(canvas);
-
-            const back = document.createElement('div');
-            back.className = 'page-back';
-            // Pre-render the next page on the back for flip effect
-            const nextIdx = currentAccessibleIndex + 1;
-            if (nextIdx < accessiblePages.length) {
-                const nextCanvas = await renderPageToCanvas(accessiblePages[nextIdx]);
-                if (nextCanvas) back.appendChild(nextCanvas);
-            }
-            wrapper.appendChild(front);
-            wrapper.appendChild(back);
-            flipbookStage.appendChild(wrapper);
-
-            // Update nav
-            fbPrev.disabled = currentAccessibleIndex === 0;
-            fbNext.disabled = currentAccessibleIndex >= accessiblePages.length - 1;
-            updateIndicator();
-
-            // Preload adjacent pages
-            preloadAdjacent();
-        }
-
-        // ── Page flip animation ──
-        async function flipPage(direction) {
-            if (isFlipping || !pdfDoc || accessiblePages.length === 0) return;
-            const targetIndex = currentAccessibleIndex + direction;
-            if (targetIndex < 0 || targetIndex >= accessiblePages.length) return;
-
-            isFlipping = true;
-            const wrapper = flipbookStage.querySelector('.flipbook-page-wrapper');
-            if (!wrapper) { isFlipping = false; return; }
-
-            const currentPageNum = accessiblePages[currentAccessibleIndex];
-            const targetPageNum = accessiblePages[targetIndex];
-
-            // Prepare the back of the wrapper with the target page
-            const back = wrapper.querySelector('.page-back');
-            if (back) {
-                back.innerHTML = '';
-                const targetCanvas = await renderPageToCanvas(targetPageNum);
-                if (targetCanvas) back.appendChild(targetCanvas);
+        <script>
+            function openBook(pdf) {
+                document.getElementById("modal").classList.add("active");
+                document.getElementById("pdfViewer").src = pdf;
             }
 
-            // Set transform origin based on direction
-            if (direction > 0) {
-                // Forward: flip around left edge
-                wrapper.style.transformOrigin = 'left center';
-                wrapper.style.webkitTransformOrigin = 'left center';
-            } else {
-                // Backward: flip around right edge
-                wrapper.style.transformOrigin = 'right center';
-                wrapper.style.webkitTransformOrigin = 'right center';
+            function closeBook() {
+                document.getElementById("modal").classList.remove("active");
+                document.getElementById("pdfViewer").src = "";
             }
-
-            // Trigger flip
-            wrapper.classList.add('flipping');
-            const rotateDeg = direction > 0 ? -180 : 180;
-            wrapper.style.transform = 'rotateY(' + rotateDeg + 'deg)';
-            wrapper.style.webkitTransform = 'rotateY(' + rotateDeg + 'deg)';
-
-            // After animation completes
-            const onTransitionEnd = function() {
-                wrapper.removeEventListener('transitionend', onTransitionEnd);
-                wrapper.classList.remove('flipping');
-                wrapper.style.transform = '';
-                wrapper.style.webkitTransform = '';
-                currentAccessibleIndex = targetIndex;
-                isFlipping = false;
-                renderCurrentSpread();
-            };
-            wrapper.addEventListener('transitionend', onTransitionEnd);
-
-            // Fallback in case transitionend doesn't fire
-            setTimeout(() => {
-                if (isFlipping && currentAccessibleIndex !== targetIndex) {
-                    onTransitionEnd();
-                }
-            }, 700);
-
-            updateIndicator();
-            fbPrev.disabled = true;
-            fbNext.disabled = true;
-        }
-
-        // ── Navigation buttons ──
-        fbNext.addEventListener('click', () => flipPage(1));
-        fbPrev.addEventListener('click', () => flipPage(-1));
-
-        // ── Keyboard navigation ──
-        document.addEventListener('keydown', function(e) {
-            if (!flipbookModal.classList.contains('active')) return;
-            if (paymentModal.classList.contains('active')) return;
-            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                e.preventDefault();
-                flipPage(1);
-            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                e.preventDefault();
-                flipPage(-1);
-            }
-        });
-
-        // ── Touch swipe on flipbook stage ──
-        let touchStartX = 0;
-        let touchStartY = 0;
-        flipbookStage.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1) {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            }
-        }, { passive: true });
-
-        flipbookStage.addEventListener('touchend', function(e) {
-            if (isFlipping) return;
-            const dx = (e.changedTouches[0]?.clientX || touchStartX) - touchStartX;
-            const dy = (e.changedTouches[0]?.clientY || touchStartY) - touchStartY;
-            const absDx = Math.abs(dx);
-            const absDy = Math.abs(dy);
-            if (absDx > absDy && absDx > 40) {
-                if (dx < -30) flipPage(1); // swipe left → next
-                else if (dx > 30) flipPage(-1); // swipe right → prev
-            }
-        });
-
-        // ── Click on flipbook stage (left half = prev, right half = next) ──
-        flipbookStage.addEventListener('click', function(e) {
-            if (isFlipping) return;
-            if (e.target.closest('.flipbook-gate-overlay')) return;
-            const rect = flipbookStage.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const mid = rect.width / 2;
-            if (x < mid) {
-                flipPage(-1);
-            } else {
-                flipPage(1);
-            }
-        });
-
-        // ── Mouse wheel on flipbook ──
-        flipbookStage.addEventListener('wheel', function(e) {
-            if (!flipbookModal.classList.contains('active')) return;
-            if (paymentModal.classList.contains('active')) return;
-            if (isFlipping) return;
-            e.preventDefault();
-            if (e.deltaY > 20 || e.deltaX > 20) flipPage(1);
-            else if (e.deltaY < -20 || e.deltaX < -20) flipPage(-1);
-        }, { passive: false });
-
-        // ── Open flipbook from product card ──
-        function openFlipbook(pdfUrl, bookName, bookKey) {
-            closeModal(paymentModal);
-            openModal(flipbookModal);
-            // Reset
-            flipbookStage.innerHTML = '';
-            flipbookLoading.classList.remove('hidden');
-            flipbookLoading.innerHTML = 'Loading PDF…';
-            flipbookGateOverlay.classList.add('hidden');
-            fbPrev.disabled = true;
-            fbNext.disabled = true;
-            fbIndicator.textContent = '…';
-            accessiblePages = [];
-            currentAccessibleIndex = 0;
-            renderedCanvases = {};
-            pdfDoc = null;
-            isFlipping = false;
-            loadFlipbookPDF(pdfUrl, bookKey);
-        }
-
-        // ── Attach to product card thumbnails & preview buttons ──
-        document.querySelectorAll('.product-card__thumb-wrap').forEach(thumb => {
-            thumb.addEventListener('click', function() {
-                const pdfUrl = this.getAttribute('data-pdf');
-                const bookName = this.getAttribute('data-book-name');
-                const bookKey = (bookName || pdfUrl || '').replace(/[^a-z0-9]/gi, '-')
-                    .toLowerCase();
-                if (pdfUrl) openFlipbook(pdfUrl, bookName, bookKey);
-            });
-        });
-
-        document.querySelectorAll('.preview-trigger').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const pdfUrl = this.getAttribute('data-pdf');
-                const bookName = this.getAttribute('data-book-name');
-                const bookKey = (bookName || pdfUrl || '').replace(/[^a-z0-9]/gi, '-')
-                    .toLowerCase();
-                if (pdfUrl) openFlipbook(pdfUrl, bookName, bookKey);
-            });
-        });
-
-        // ── Handle window resize for flipbook ──
-        let resizeDebounce;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeDebounce);
-            resizeDebounce = setTimeout(() => {
-                if (flipbookModal.classList.contains('active') && pdfDoc && accessiblePages
-                    .length > 0) {
-                    // Clear render cache to adjust for new size
-                    renderedCanvases = {};
-                    renderCurrentSpread();
-                }
-            }, 400);
-        });
-
-        // ── Service Worker registration (optional, for offline caching) ──
-        if ('serviceWorker' in navigator) {
-            // Minimal offline support: if a SW is already registered, great; otherwise skip.
-            // Production would register a SW here.
-            // navigator.serviceWorker.register('/sw.js').catch(() => {});
-        }
-
-        // ── Log initialization ──
-        console.log('%c🌿 Tarang Joshi Photo Book Store %cready',
-            'font-size:1.2em;color:#4a6a4a;', 'color:#888;');
-        console.log('%c📖 Flipbook with PDF.js + CSS 3D page-flip %c| %c💳 UPI: EKDHARANI.09@cmsidfc',
-            'color:#aaa;', '', 'color:#6c3cc9;');
-        console.log('%c📱 WhatsApp: 91993006169 %c| %c🏦 Bank: IDFC 10059271015',
-            'color:#25D366;', '', 'color:#888;');
-        console.log('%c✔ Preview gating active (first ' + PREVIEW_FIRST_N + ' + last ' + PREVIEW_LAST_N +
-            ' pages)',
-            'color:#c90;');
-    })();
-</script>
-</body>
+        </script>
+    </body>
 </html>
