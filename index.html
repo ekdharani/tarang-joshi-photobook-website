@@ -1,837 +1,1144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0a0a0a">
-    <meta name="description" content="Tarang Joshi — Photo Books created with 14Trees. Ungreen Scape & Between Shadows.">
-    <title>Tarang Joshi · Photo Books</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+        />
+        <meta name="theme-color" content="#0a0a0a" />
+        <meta
+            name="description"
+            content="Tarang Joshi — Photo Books created with 14Trees. Ungreen Scape & Between Shadows."
+        />
+        <title>Tarang Joshi · Photo Books</title>
 
-    <!-- PDF.js from CDN (only external dependency) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
+        <!-- PDF.js from CDN (only external dependency) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+        <style>
+            :root {
+                --bg: #fafaf8;
+                --surface: #ffffff;
+                --text: #1a1a1a;
+                --text-secondary: #555555;
+                --text-muted: #888888;
+                --accent: #1a1a1a;
+                --accent-hover: #333333;
+                --border: #e5e5e0;
+                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+                --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+                --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15);
+                --radius-sm: 6px;
+                --radius: 10px;
+                --radius-lg: 16px;
+                --font-serif: "Georgia", "Times New Roman", "Noto Serif", serif;
+                --font-sans:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter",
+                    system-ui, sans-serif;
+                --transition-fast: 0.18s ease-out;
+                --transition-smooth: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+                --flip-duration: 0.55s;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #0d0d0c;
+                    --surface: #181817;
+                    --text: #e8e8e6;
+                    --text-secondary: #b0b0ad;
+                    --text-muted: #777775;
+                    --accent: #e8e8e6;
+                    --accent-hover: #ffffff;
+                    --border: #2a2a27;
+                    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+                    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+                    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45);
+                }
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html {
+                scroll-behavior: smooth;
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+                font-size: 16px;
+            }
+
+            body {
+                font-family: var(--font-sans);
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                min-height: 100vh;
+                min-height: 100dvh;
+                display: flex;
+                flex-direction: column;
+                -webkit-font-smoothing: antialiased;
+                transition:
+                    background var(--transition-smooth),
+                    color var(--transition-smooth);
+                overflow-x: hidden;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                font-family: var(--font-serif);
+                font-weight: 400;
+                letter-spacing: -0.01em;
+                line-height: 1.2;
+            }
+            h1 {
+                font-size: clamp(1.6rem, 4vw, 2.6rem);
+            }
+            h2 {
+                font-size: clamp(1.25rem, 3vw, 1.8rem);
+            }
+            h3 {
+                font-size: clamp(1rem, 2.2vw, 1.3rem);
+            }
+            p {
+                font-size: 0.95rem;
+                color: var(--text-secondary);
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 0 clamp(12px, 3vw, 28px);
+            }
+
+            /* Hero */
+            .hero {
+                position: relative;
+                width: 100%;
+                min-height: 55vh;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                background: linear-gradient(160deg, #1c1c1a, #2a2a26);
+                overflow: hidden;
+                padding: 2rem 1rem 3rem;
+            }
+            .hero-content {
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                max-width: 650px;
+            }
+            .hero-content h1 {
+                color: #f0f0eb;
+                font-size: clamp(1.8rem, 5vw, 3rem);
+                margin-bottom: 0.5rem;
+            }
+            .hero-content .subtitle {
+                color: #c5c5be;
+                font-style: italic;
+                font-family: var(--font-serif);
+            }
+            .hero-placeholder {
+                position: absolute;
+                inset: 0;
+                opacity: 0.2;
+                background: radial-gradient(
+                    circle at 30% 40%,
+                    rgba(255, 255, 255, 0.08),
+                    transparent
+                );
+                pointer-events: none;
+            }
+
+            .section {
+                padding: 2.5rem 0;
+            }
+            .product-grid {
+                display: grid;
+                grid-template-columns: repeat(
+                    auto-fit,
+                    minmax(min(100%, 320px), 1fr)
+                );
+                gap: clamp(16px, 3vw, 28px);
+                align-items: start;
+            }
+            .product-card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                box-shadow: var(--shadow-sm);
+                transition: all 0.35s;
+                display: flex;
+                flex-direction: column;
+            }
+            .product-card:hover {
+                box-shadow: var(--shadow-md);
+                transform: translateY(-3px);
+            }
+            .product-card__thumb-wrap {
+                position: relative;
+                aspect-ratio: 4/3;
+                overflow: hidden;
+                cursor: pointer;
+                background: #e8e8e3;
+            }
+            .product-card__thumb-wrap img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.55s;
+            }
+            .product-card__thumb-wrap:hover img {
+                transform: scale(1.04);
+            }
+            .product-card__body {
+                padding: 1.1rem 1.2rem 1.3rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                flex-grow: 1;
+            }
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.4rem;
+                padding: 0.6rem 1.1rem;
+                font-size: 0.88rem;
+                font-weight: 500;
+                border-radius: 50px;
+                border: 1.5px solid transparent;
+                cursor: pointer;
+                text-decoration: none;
+                transition: all 0.18s;
+                white-space: nowrap;
+                -webkit-tap-highlight-color: transparent;
+                user-select: none;
+            }
+            .btn-primary {
+                background: #1a1a1a;
+                color: #fff;
+                border-color: #1a1a1a;
+            }
+            .btn-primary:hover {
+                background: #333;
+            }
+            .btn-outline {
+                background: transparent;
+                color: currentColor;
+                border-color: #ccc;
+            }
+            .btn-outline:hover {
+                border-color: #1a1a1a;
+                background: rgba(0, 0, 0, 0.03);
+            }
+            .btn-whatsapp {
+                background: #25d366;
+                color: #fff;
+                border-color: #25d366;
+            }
+            .btn-whatsapp:hover {
+                background: #1fb855;
+            }
+            .btn-donate {
+                background: #b88a3a;
+                color: #fff;
+                border-color: #b88a3a;
+            }
+            .btn-donate:hover {
+                background: #9e7230;
+            }
+            .btn-sm {
+                padding: 0.45rem 0.85rem;
+                font-size: 0.8rem;
+            }
+
+            .product-card__actions {
+                display: flex;
+                gap: 0.6rem;
+                flex-wrap: wrap;
+                margin-top: 0.4rem;
+            }
+
+            /* MODALS */
+            .modal-backdrop {
+                position: fixed;
+                inset: 0;
+                z-index: 1000;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.4s;
+                backdrop-filter: blur(6px);
+            }
+            .modal-backdrop.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .modal-panel {
+                background: var(--surface);
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+                width: 100%;
+                max-width: 520px;
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
+                transform: translateY(30px);
+                transition: transform 0.4s;
+            }
+            .modal-backdrop.active .modal-panel {
+                transform: translateY(0);
+            }
+            .modal-panel.flipbook-panel {
+                max-width: 95vw;
+                width: 100%;
+                height: 90vh;
+                max-height: 96vh;
+                border-radius: 0;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                background: #0f0f0e;
+            }
+            @media (max-width: 768px) {
+                .modal-panel.flipbook-panel {
+                    height: 100dvh;
+                    width: 100vw;
+                    max-width: 100vw;
+                    max-height: 100dvh;
+                    border-radius: 0;
+                }
+            }
+            .modal-close {
+                position: absolute;
+                top: 12px;
+                right: 16px;
+                z-index: 30;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255, 255, 255, 0.15);
+                color: #fff;
+                font-size: 1.4rem;
+                cursor: pointer;
+                backdrop-filter: blur(10px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* FLIPBOOK */
+            .flipbook-container {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                background: #121212;
+                position: relative;
+                overflow: hidden;
+            }
+            .flipbook-stage {
+                flex: 1;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                user-select: none;
+            }
+            .page-view {
+                position: relative;
+                width: 90%;
+                height: 90%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .page-canvas {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+                border-radius: 2px;
+            }
+            .page-peel-animation {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 10;
+            }
+            .peel-half {
+                position: absolute;
+                top: 0;
+                height: 100%;
+                overflow: hidden;
+                backface-visibility: hidden;
+            }
+            .peel-left {
+                left: 0;
+                width: 50%;
+                clip-path: inset(0 0 0 0);
+            }
+            .peel-right {
+                right: 0;
+                width: 50%;
+                transform-origin: right center;
+                transition: transform var(--flip-duration)
+                    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                clip-path: inset(0 0 0 0);
+            }
+            .peel-right img {
+                width: 200%;
+                max-width: none;
+                height: 100%;
+                object-fit: contain;
+                object-position: left center;
+                transform: translateX(-100%);
+            }
+            .peel-left img {
+                width: 200%;
+                max-width: none;
+                height: 100%;
+                object-fit: contain;
+                object-position: left center;
+            }
+
+            .floating-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(8px);
+                border: none;
+                color: white;
+                font-size: 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 20;
+                transition: background 0.2s;
+                -webkit-tap-highlight-color: transparent;
+                user-select: none;
+            }
+            .floating-nav:hover {
+                background: rgba(255, 255, 255, 0.4);
+            }
+            .nav-prev {
+                left: 12px;
+            }
+            .nav-next {
+                right: 12px;
+            }
+            @media (max-width: 480px) {
+                .floating-nav {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1.6rem;
+                }
+                .nav-prev {
+                    left: 6px;
+                }
+                .nav-next {
+                    right: 6px;
+                }
+            }
+
+            .flipbook-loading {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.8);
+                color: #ccc;
+                z-index: 25;
+            }
+            .flipbook-loading.hidden {
+                display: none;
+            }
+
+            .page-indicator-bar {
+                padding: 10px;
+                text-align: center;
+                color: #aaa;
+                font-size: 0.9rem;
+                background: #1a1a1a;
+                flex-shrink: 0;
+            }
+
+            /* toast */
+            .toast {
+                position: fixed;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%) translateY(80px);
+                background: #1a1a1a;
+                color: #fff;
+                padding: 0.7rem 1.4rem;
+                border-radius: 50px;
+                z-index: 2000;
+                pointer-events: none;
+                opacity: 0;
+                transition: all 0.25s;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            }
+            .toast.show {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        </style>
+    </head>
+
+    <!-- Google tag (gtag.js) -->
+    <script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-N69DSV3H8Y"
+    ></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+
+        gtag("config", "G-N69DSV3H8Y");
     </script>
 
-    <style>
-        :root {
-            --bg: #fafaf8;
-            --surface: #ffffff;
-            --text: #1a1a1a;
-            --text-secondary: #555555;
-            --text-muted: #888888;
-            --accent: #1a1a1a;
-            --accent-hover: #333333;
-            --border: #e5e5e0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
-            --shadow-lg: 0 12px 40px rgba(0,0,0,0.15);
-            --radius-sm: 6px;
-            --radius: 10px;
-            --radius-lg: 16px;
-            --font-serif: 'Georgia', 'Times New Roman', 'Noto Serif', serif;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
-            --transition-fast: 0.18s ease-out;
-            --transition-smooth: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-            --flip-duration: 0.55s;
-        }
+    <body>
+        <header class="hero">
+            <div class="hero-placeholder"></div>
+            <div class="hero-content">
+                <h1>Tarang Joshi</h1>
+                <p class="subtitle">Photo Books · created with 14Trees</p>
+                <p
+                    class="byline"
+                    style="
+                        color: #999;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                    "
+                >
+                    Ungreen Scape & Between Shadows
+                </p>
+            </div>
+        </header>
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #0d0d0c;
-                --surface: #181817;
-                --text: #e8e8e6;
-                --text-secondary: #b0b0ad;
-                --text-muted: #777775;
-                --accent: #e8e8e6;
-                --accent-hover: #ffffff;
-                --border: #2a2a27;
-                --shadow-sm: 0 1px 3px rgba(0,0,0,0.25);
-                --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
-                --shadow-lg: 0 12px 40px rgba(0,0,0,0.45);
-            }
-        }
+        <main class="container section">
+            <div style="text-align: center; margin-bottom: 2rem">
+                <h2>The Books</h2>
+                <p class="text-muted">
+                    Physical photo books — preview gated, unlock with a donation
+                </p>
+            </div>
+            <div class="product-grid">
+                <!-- Book 1 -->
+                <article class="product-card">
+                    <div
+                        class="product-card__thumb-wrap"
+                        data-pdf="tarang.joshi-2509-ungreen-scape.pdf"
+                        data-book="Ungreen Scape"
+                        data-key="ungreen-scape"
+                    >
+                        <img
+                            src="tarang.joshi-2509-ungreen-scape.jpg"
+                            alt="Ungreen Scape"
+                            loading="lazy"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentElement.style.background = '#3a4a3a';
+                            "
+                        />
+                    </div>
+                    <div class="product-card__body">
+                        <h3>Ungreen Scape</h3>
+                        <p>
+                            Exploring the tension between the natural and the
+                            constructed.
+                        </p>
+                        <div class="product-card__actions">
+                            <button
+                                class="btn btn-outline btn-sm preview-btn"
+                                data-pdf="tarang.joshi-2509-ungreen-scape.pdf"
+                                data-book="Ungreen Scape"
+                                data-key="ungreen-scape"
+                            >
+                                Preview
+                            </button>
+                            <a
+                                class="btn btn-whatsapp btn-sm"
+                                href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Ungreen%20Scape*.%20Please%20share%20details."
+                                target="_blank"
+                                >WhatsApp</a
+                            >
+                            <button
+                                class="btn btn-donate btn-sm donate-btn"
+                                data-book="Ungreen Scape"
+                                data-key="ungreen-scape"
+                            >
+                                Donate to Buy
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                <!-- Book 2 -->
+                <article class="product-card">
+                    <div
+                        class="product-card__thumb-wrap"
+                        data-pdf="tarang.joshi-2503-between-shadows.pdf"
+                        data-book="Between Shadows"
+                        data-key="between-shadows"
+                    >
+                        <img
+                            src="tarang.joshi-2503-between-shadows.jpg"
+                            alt="Between Shadows"
+                            loading="lazy"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentElement.style.background = '#2a2a3a';
+                            "
+                        />
+                    </div>
+                    <div class="product-card__body">
+                        <h3>Between Shadows</h3>
+                        <p>
+                            Where light falters and form dissolves — a visual
+                            journey.
+                        </p>
+                        <div class="product-card__actions">
+                            <button
+                                class="btn btn-outline btn-sm preview-btn"
+                                data-pdf="tarang.joshi-2503-between-shadows.pdf"
+                                data-book="Between Shadows"
+                                data-key="between-shadows"
+                            >
+                                Preview
+                            </button>
+                            <a
+                                class="btn btn-whatsapp btn-sm"
+                                href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Between%20Shadows*.%20Please%20share%20details."
+                                target="_blank"
+                                >WhatsApp</a
+                            >
+                            <button
+                                class="btn btn-donate btn-sm donate-btn"
+                                data-book="Between Shadows"
+                                data-key="between-shadows"
+                            >
+                                Donate to Buy
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </main>
 
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        <footer
+            style="
+                text-align: center;
+                padding: 2rem 0;
+                border-top: 1px solid var(--border);
+                color: var(--text-muted);
+            "
+        >
+            <p>© 2025 Tarang Joshi · Support EkDharani</p>
+        </footer>
 
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-            font-size: 16px;
-        }
-
-        body {
-            font-family: var(--font-sans);
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-            transition: background var(--transition-smooth), color var(--transition-smooth);
-            overflow-x: hidden;
-        }
-
-        h1,h2,h3,h4 {
-            font-family: var(--font-serif);
-            font-weight: 400;
-            letter-spacing: -0.01em;
-            line-height: 1.2;
-        }
-        h1 {font-size: clamp(1.6rem, 4vw, 2.6rem);}
-        h2 {font-size: clamp(1.25rem, 3vw, 1.8rem);}
-        h3 {font-size: clamp(1rem, 2.2vw, 1.3rem);}
-        p {font-size: 0.95rem; color: var(--text-secondary);}
-
-        .container {
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 clamp(12px, 3vw, 28px);
-        }
-
-        /* Hero */
-        .hero {
-            position: relative;
-            width: 100%;
-            min-height: 55vh;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            background: linear-gradient(160deg, #1c1c1a, #2a2a26);
-            overflow: hidden;
-            padding: 2rem 1rem 3rem;
-        }
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            max-width: 650px;
-        }
-        .hero-content h1 {
-            color: #f0f0eb;
-            font-size: clamp(1.8rem, 5vw, 3rem);
-            margin-bottom: 0.5rem;
-        }
-        .hero-content .subtitle {
-            color: #c5c5be;
-            font-style: italic;
-            font-family: var(--font-serif);
-        }
-        .hero-placeholder {
-            position: absolute;
-            inset: 0;
-            opacity: 0.2;
-            background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.08), transparent);
-            pointer-events: none;
-        }
-
-        .section {padding: 2.5rem 0;}
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-            gap: clamp(16px, 3vw, 28px);
-            align-items: start;
-        }
-        .product-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.35s;
-            display: flex;
-            flex-direction: column;
-        }
-        .product-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-3px);
-        }
-        .product-card__thumb-wrap {
-            position: relative;
-            aspect-ratio: 4/3;
-            overflow: hidden;
-            cursor: pointer;
-            background: #e8e8e3;
-        }
-        .product-card__thumb-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.55s;
-        }
-        .product-card__thumb-wrap:hover img {transform: scale(1.04);}
-        .product-card__body {
-            padding: 1.1rem 1.2rem 1.3rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            flex-grow: 1;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            padding: 0.6rem 1.1rem;
-            font-size: 0.88rem;
-            font-weight: 500;
-            border-radius: 50px;
-            border: 1.5px solid transparent;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.18s;
-            white-space: nowrap;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-        .btn-primary {background: #1a1a1a; color: #fff; border-color: #1a1a1a;}
-        .btn-primary:hover {background: #333;}
-        .btn-outline {background: transparent; color: currentColor; border-color: #ccc;}
-        .btn-outline:hover {border-color: #1a1a1a; background: rgba(0,0,0,0.03);}
-        .btn-whatsapp {background: #25D366; color: #fff; border-color: #25D366;}
-        .btn-whatsapp:hover {background: #1fb855;}
-        .btn-donate {background: #b88a3a; color: #fff; border-color: #b88a3a;}
-        .btn-donate:hover {background: #9e7230;}
-        .btn-sm {padding: 0.45rem 0.85rem; font-size: 0.8rem;}
-
-        .product-card__actions {display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.4rem;}
-
-        /* MODALS */
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s;
-            backdrop-filter: blur(6px);
-        }
-        .modal-backdrop.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .modal-panel {
-            background: var(--surface);
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            width: 100%;
-            max-width: 520px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            transform: translateY(30px);
-            transition: transform 0.4s;
-        }
-        .modal-backdrop.active .modal-panel {transform: translateY(0);}
-        .modal-panel.flipbook-panel {
-            max-width: 95vw;
-            width: 100%;
-            height: 90vh;
-            max-height: 96vh;
-            border-radius: 0;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            background: #0f0f0e;
-        }
-        @media (max-width: 768px) {
-            .modal-panel.flipbook-panel {
-                height: 100dvh;
-                width: 100vw;
-                max-width: 100vw;
-                max-height: 100dvh;
-                border-radius: 0;
-            }
-        }
-        .modal-close {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            z-index: 30;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255,255,255,0.15);
-            color: #fff;
-            font-size: 1.4rem;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* FLIPBOOK */
-        .flipbook-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #121212;
-            position: relative;
-            overflow: hidden;
-        }
-        .flipbook-stage {
-            flex: 1;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            user-select: none;
-        }
-        .page-view {
-            position: relative;
-            width: 90%;
-            height: 90%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .page-canvas {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            border-radius: 2px;
-        }
-        .page-peel-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
-        }
-        .peel-half {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            overflow: hidden;
-            backface-visibility: hidden;
-        }
-        .peel-left {
-            left: 0;
-            width: 50%;
-            clip-path: inset(0 0 0 0);
-        }
-        .peel-right {
-            right: 0;
-            width: 50%;
-            transform-origin: right center;
-            transition: transform var(--flip-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            clip-path: inset(0 0 0 0);
-        }
-        .peel-right img {
-            width: 200%;
-            max-width: none;
-            height: 100%;
-            object-fit: contain;
-            object-position: left center;
-            transform: translateX(-100%);
-        }
-        .peel-left img {
-            width: 200%;
-            max-width: none;
-            height: 100%;
-            object-fit: contain;
-            object-position: left center;
-        }
-
-        .floating-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(8px);
-            border: none;
-            color: white;
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 20;
-            transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-        .floating-nav:hover {background: rgba(255,255,255,0.4);}
-        .nav-prev {left: 12px;}
-        .nav-next {right: 12px;}
-        @media (max-width: 480px) {
-            .floating-nav {width: 40px; height: 40px; font-size: 1.6rem;}
-            .nav-prev {left: 6px;} .nav-next {right: 6px;}
-        }
-
-        .flipbook-loading {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.8);
-            color: #ccc;
-            z-index: 25;
-        }
-        .flipbook-loading.hidden {display: none;}
-
-        .page-indicator-bar {
-            padding: 10px;
-            text-align: center;
-            color: #aaa;
-            font-size: 0.9rem;
-            background: #1a1a1a;
-            flex-shrink: 0;
-        }
-
-        /* toast */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: #1a1a1a;
-            color: #fff;
-            padding: 0.7rem 1.4rem;
-            border-radius: 50px;
-            z-index: 2000;
-            pointer-events: none;
-            opacity: 0;
-            transition: all 0.25s;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-        }
-        .toast.show {opacity: 1; transform: translateX(-50%) translateY(0);}
-    </style>
-</head>
-<body>
-
-    <header class="hero">
-        <div class="hero-placeholder"></div>
-        <div class="hero-content">
-            <h1>Tarang Joshi</h1>
-            <p class="subtitle">Photo Books · created with 14Trees</p>
-            <p class="byline" style="color:#999; text-transform:uppercase; letter-spacing:0.05em;">Ungreen Scape & Between Shadows</p>
-        </div>
-    </header>
-
-    <main class="container section">
-        <div style="text-align:center; margin-bottom:2rem;">
-            <h2>The Books</h2>
-            <p class="text-muted">Physical photo books — preview gated, unlock with a donation</p>
-        </div>
-        <div class="product-grid">
-            <!-- Book 1 -->
-            <article class="product-card">
-                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book="Ungreen Scape" data-key="ungreen-scape">
-                    <img src="tarang.joshi-2509-ungreen-scape.jpg" alt="Ungreen Scape" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='#3a4a3a';">
-                </div>
-                <div class="product-card__body">
-                    <h3>Ungreen Scape</h3>
-                    <p>Exploring the tension between the natural and the constructed.</p>
-                    <div class="product-card__actions">
-                        <button class="btn btn-outline btn-sm preview-btn" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book="Ungreen Scape" data-key="ungreen-scape">Preview</button>
-                        <a class="btn btn-whatsapp btn-sm" href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Ungreen%20Scape*.%20Please%20share%20details." target="_blank">WhatsApp</a>
-                        <button class="btn btn-donate btn-sm donate-btn" data-book="Ungreen Scape" data-key="ungreen-scape">Donate to Buy</button>
+        <!-- FLIPBOOK MODAL -->
+        <div class="modal-backdrop" id="flipbook-modal">
+            <div class="modal-panel flipbook-panel">
+                <button class="modal-close" id="close-flipbook">&times;</button>
+                <div class="flipbook-container">
+                    <div class="flipbook-loading hidden" id="fb-loading">
+                        Loading PDF…
+                    </div>
+                    <div class="flipbook-stage" id="fb-stage">
+                        <div class="page-view" id="page-view"></div>
+                        <button
+                            class="floating-nav nav-prev"
+                            id="nav-prev"
+                            aria-label="Previous page"
+                        >
+                            ‹
+                        </button>
+                        <button
+                            class="floating-nav nav-next"
+                            id="nav-next"
+                            aria-label="Next page"
+                        >
+                            ›
+                        </button>
+                    </div>
+                    <div class="page-indicator-bar" id="fb-indicator">
+                        1 / 1
                     </div>
                 </div>
-            </article>
-            <!-- Book 2 -->
-            <article class="product-card">
-                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book="Between Shadows" data-key="between-shadows">
-                    <img src="tarang.joshi-2503-between-shadows.jpg" alt="Between Shadows" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='#2a2a3a';">
-                </div>
-                <div class="product-card__body">
-                    <h3>Between Shadows</h3>
-                    <p>Where light falters and form dissolves — a visual journey.</p>
-                    <div class="product-card__actions">
-                        <button class="btn btn-outline btn-sm preview-btn" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book="Between Shadows" data-key="between-shadows">Preview</button>
-                        <a class="btn btn-whatsapp btn-sm" href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Between%20Shadows*.%20Please%20share%20details." target="_blank">WhatsApp</a>
-                        <button class="btn btn-donate btn-sm donate-btn" data-book="Between Shadows" data-key="between-shadows">Donate to Buy</button>
-                    </div>
-                </div>
-            </article>
-        </div>
-    </main>
-
-    <footer style="text-align:center; padding:2rem 0; border-top:1px solid var(--border); color:var(--text-muted);">
-        <p>© 2025 Tarang Joshi · Support EkDharani</p>
-    </footer>
-
-    <!-- FLIPBOOK MODAL -->
-    <div class="modal-backdrop" id="flipbook-modal">
-        <div class="modal-panel flipbook-panel">
-            <button class="modal-close" id="close-flipbook">&times;</button>
-            <div class="flipbook-container">
-                <div class="flipbook-loading hidden" id="fb-loading">Loading PDF…</div>
-                <div class="flipbook-stage" id="fb-stage">
-                    <div class="page-view" id="page-view"></div>
-                    <button class="floating-nav nav-prev" id="nav-prev" aria-label="Previous page">‹</button>
-                    <button class="floating-nav nav-next" id="nav-next" aria-label="Next page">›</button>
-                </div>
-                <div class="page-indicator-bar" id="fb-indicator">1 / 1</div>
             </div>
         </div>
-    </div>
 
-    <!-- PAYMENT MODAL -->
-    <div class="modal-backdrop" id="payment-modal">
-        <div class="modal-panel" style="max-width:480px;">
-            <button class="modal-close" id="close-payment" style="color:#000;">&times;</button>
-            <div style="padding:1.8rem;" id="payment-body">
-                <!-- dynamic -->
+        <!-- PAYMENT MODAL -->
+        <div class="modal-backdrop" id="payment-modal">
+            <div class="modal-panel" style="max-width: 480px">
+                <button
+                    class="modal-close"
+                    id="close-payment"
+                    style="color: #000"
+                >
+                    &times;
+                </button>
+                <div style="padding: 1.8rem" id="payment-body">
+                    <!-- dynamic -->
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="toast" id="toast"></div>
+        <div class="toast" id="toast"></div>
 
-    <script>
-        (function() {
-            if (typeof pdfjsLib !== 'undefined') {
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            }
-
-            const fbModal = document.getElementById('flipbook-modal');
-            const payModal = document.getElementById('payment-modal');
-            const fbStage = document.getElementById('fb-stage');
-            const pageView = document.getElementById('page-view');
-            const fbLoading = document.getElementById('fb-loading');
-            const fbIndicator = document.getElementById('fb-indicator');
-            const navPrev = document.getElementById('nav-prev');
-            const navNext = document.getElementById('nav-next');
-            const toast = document.getElementById('toast');
-
-            let pdfDoc = null;
-            let pages = [];
-            let currentIdx = 0;
-            let currentBookKey = '';
-            let currentBookName = '';
-            let unlocked = {};
-            let isAnimating = false;
-            const FIRST = 5, LAST = 5;
-
-            // Load unlock state
-            try { unlocked = JSON.parse(localStorage.getItem('ekdharani_unlocked') || '{}'); } catch(e) {}
-
-            function saveUnlocks() { localStorage.setItem('ekdharani_unlocked', JSON.stringify(unlocked)); }
-
-            function toastMsg(msg) {
-                toast.textContent = msg;
-                toast.classList.add('show');
-                clearTimeout(toast._t);
-                toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
-            }
-
-            // Modal controls
-            function openModal(m) { m.classList.add('active'); document.body.style.overflow='hidden'; }
-            function closeModal(m) { m.classList.remove('active'); document.body.style.overflow=''; }
-            document.getElementById('close-flipbook').onclick = () => closeModal(fbModal);
-            document.getElementById('close-payment').onclick = () => closeModal(payModal);
-            fbModal.addEventListener('click', e => { if(e.target===fbModal) closeModal(fbModal); });
-            payModal.addEventListener('click', e => { if(e.target===payModal) closeModal(payModal); });
-            document.addEventListener('keydown', e => {
-                if (e.key === 'Escape') {
-                    if (payModal.classList.contains('active')) closeModal(payModal);
-                    else if (fbModal.classList.contains('active')) closeModal(fbModal);
+        <script>
+            (function () {
+                if (typeof pdfjsLib !== "undefined") {
+                    pdfjsLib.GlobalWorkerOptions.workerSrc =
+                        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
                 }
-            });
 
-            function isPageLocked(pageNum, total) {
-                if (!currentBookKey || unlocked[currentBookKey]) return false;
-                if (total <= FIRST + LAST) return false;
-                return !(pageNum <= FIRST || pageNum > total - LAST);
-            }
+                const fbModal = document.getElementById("flipbook-modal");
+                const payModal = document.getElementById("payment-modal");
+                const fbStage = document.getElementById("fb-stage");
+                const pageView = document.getElementById("page-view");
+                const fbLoading = document.getElementById("fb-loading");
+                const fbIndicator = document.getElementById("fb-indicator");
+                const navPrev = document.getElementById("nav-prev");
+                const navNext = document.getElementById("nav-next");
+                const toast = document.getElementById("toast");
 
-            async function renderPageCanvas(pageNum) {
-                if (!pdfDoc) return null;
+                let pdfDoc = null;
+                let pages = [];
+                let currentIdx = 0;
+                let currentBookKey = "";
+                let currentBookName = "";
+                let unlocked = {};
+                let isAnimating = false;
+                const FIRST = 5,
+                    LAST = 5;
+
+                // Load unlock state
                 try {
-                    const page = await pdfDoc.getPage(pageNum);
-                    const viewport = page.getViewport({scale: 1.5});
-                    const canvas = document.createElement('canvas');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-                    const ctx = canvas.getContext('2d');
-                    await page.render({canvasContext: ctx, viewport}).promise;
-                    return canvas;
-                } catch (e) {
-                    const c = document.createElement('canvas'); c.width=200; c.height=280;
-                    const ctx=c.getContext('2d'); ctx.fillStyle='#eee'; ctx.fillRect(0,0,200,280);
-                    ctx.fillStyle='#888'; ctx.fillText('Page '+pageNum,40,140);
-                    return c;
+                    unlocked = JSON.parse(
+                        localStorage.getItem("ekdharani_unlocked") || "{}",
+                    );
+                } catch (e) {}
+
+                function saveUnlocks() {
+                    localStorage.setItem(
+                        "ekdharani_unlocked",
+                        JSON.stringify(unlocked),
+                    );
                 }
-            }
 
-            function showPage(canvas) {
-                pageView.innerHTML = '';
-                const img = document.createElement('img');
-                img.src = canvas.toDataURL();
-                img.className = 'page-canvas';
-                if (isPageLocked(pages[currentIdx], pages.length)) {
-                    img.style.filter = 'blur(12px) brightness(0.5)';
-                    const lock = document.createElement('div');
-                    lock.style.position='absolute'; lock.style.inset='0';
-                    lock.style.display='flex'; lock.style.alignItems='center'; lock.style.justifyContent='center';
-                    lock.style.color='white'; lock.style.fontSize='1.2rem'; lock.style.textShadow='0 2px 8px black';
-                    lock.innerHTML = '🔒 Donate to EkDharani<br>to unlock';
-                    pageView.appendChild(img);
-                    pageView.appendChild(lock);
-                } else {
-                    pageView.appendChild(img);
+                function toastMsg(msg) {
+                    toast.textContent = msg;
+                    toast.classList.add("show");
+                    clearTimeout(toast._t);
+                    toast._t = setTimeout(
+                        () => toast.classList.remove("show"),
+                        2500,
+                    );
                 }
-                fbIndicator.textContent = `${currentIdx+1} / ${pages.length}`;
-                navPrev.style.opacity = currentIdx === 0 ? '0.3' : '1';
-                navNext.style.opacity = currentIdx >= pages.length-1 ? '0.3' : '1';
-            }
 
-            async function goToPage(index) {
-                if (index < 0 || index >= pages.length) return;
-                currentIdx = index;
-                const canvas = await renderPageCanvas(pages[currentIdx]);
-                if (canvas) showPage(canvas);
-            }
-
-            async function animatePeel(direction) {
-                if (isAnimating || pages.length < 2) return;
-                const targetIdx = currentIdx + direction;
-                if (targetIdx < 0 || targetIdx >= pages.length) return;
-                isAnimating = true;
-
-                const currentCanvas = await renderPageCanvas(pages[currentIdx]);
-                const targetCanvas = await renderPageCanvas(pages[targetIdx]);
-                if (!currentCanvas || !targetCanvas) { isAnimating = false; return; }
-
-                // Prepare peel overlay
-                const peelContainer = document.createElement('div');
-                peelContainer.className = 'page-peel-animation';
-                peelContainer.style.position = 'absolute';
-                peelContainer.style.inset = '0';
-                peelContainer.style.zIndex = '15';
-
-                // Left half (static)
-                const leftHalf = document.createElement('div');
-                leftHalf.className = 'peel-half peel-left';
-                const leftImg = document.createElement('img');
-                leftImg.src = currentCanvas.toDataURL();
-                leftImg.style.width = '200%';
-                leftImg.style.height = '100%';
-                leftImg.style.objectFit = 'contain';
-                leftImg.style.objectPosition = 'left center';
-                leftHalf.appendChild(leftImg);
-
-                // Right half (will animate)
-                const rightHalf = document.createElement('div');
-                rightHalf.className = 'peel-half peel-right';
-                const rightImg = document.createElement('img');
-                rightImg.src = currentCanvas.toDataURL();
-                rightImg.style.width = '200%';
-                rightImg.style.height = '100%';
-                rightImg.style.objectFit = 'contain';
-                rightImg.style.objectPosition = 'left center';
-                rightImg.style.transform = 'translateX(-100%)';
-                rightHalf.appendChild(rightImg);
-
-                peelContainer.appendChild(leftHalf);
-                peelContainer.appendChild(rightHalf);
-
-                // Target page background
-                pageView.innerHTML = '';
-                const bgImg = document.createElement('img');
-                bgImg.src = targetCanvas.toDataURL();
-                bgImg.className = 'page-canvas';
-                bgImg.style.filter = isPageLocked(pages[targetIdx], pages.length) ? 'blur(12px) brightness(0.5)' : 'none';
-                pageView.appendChild(bgImg);
-                pageView.appendChild(peelContainer);
-
-                // Start animation
-                requestAnimationFrame(() => {
-                    if (direction > 0) {
-                        // forward: right half rotates from 0 to -180
-                        rightHalf.style.transform = 'rotateY(-180deg)';
-                    } else {
-                        // backward: right half starts rotated and goes to 0
-                        rightHalf.style.transform = 'rotateY(-180deg)';
-                        requestAnimationFrame(() => {
-                            rightHalf.style.transition = `transform var(--flip-duration) cubic-bezier(0.25,0.46,0.45,0.94)`;
-                            rightHalf.style.transform = 'rotateY(0deg)';
-                        });
-                        // For backward, we need the target page to be the one from which we are peeling,
-                        // but we already set bgImg as target. Actually backward animation should show the current page
-                        // being covered by the previous page's right half. That's a bit different.
-                        // Simplified: For backward, we'll treat it similar but we show the previous page as bg and peel the current page's right half back to 0? That would look odd.
-                        // Let's keep it simple: animate the right half of the target page? We'll adapt:
-                        // We'll replace bgImg with currentCanvas (the page we are leaving) and peel targetCanvas's right half from -180 to 0.
+                // Modal controls
+                function openModal(m) {
+                    m.classList.add("active");
+                    document.body.style.overflow = "hidden";
+                }
+                function closeModal(m) {
+                    m.classList.remove("active");
+                    document.body.style.overflow = "";
+                }
+                document.getElementById("close-flipbook").onclick = () =>
+                    closeModal(fbModal);
+                document.getElementById("close-payment").onclick = () =>
+                    closeModal(payModal);
+                fbModal.addEventListener("click", (e) => {
+                    if (e.target === fbModal) closeModal(fbModal);
+                });
+                payModal.addEventListener("click", (e) => {
+                    if (e.target === payModal) closeModal(payModal);
+                });
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") {
+                        if (payModal.classList.contains("active"))
+                            closeModal(payModal);
+                        else if (fbModal.classList.contains("active"))
+                            closeModal(fbModal);
                     }
                 });
 
-                const finish = () => {
-                    rightHalf.removeEventListener('transitionend', finish);
-                    peelContainer.remove();
-                    currentIdx = targetIdx;
+                function isPageLocked(pageNum, total) {
+                    if (!currentBookKey || unlocked[currentBookKey])
+                        return false;
+                    if (total <= FIRST + LAST) return false;
+                    return !(pageNum <= FIRST || pageNum > total - LAST);
+                }
+
+                async function renderPageCanvas(pageNum) {
+                    if (!pdfDoc) return null;
+                    try {
+                        const page = await pdfDoc.getPage(pageNum);
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement("canvas");
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        const ctx = canvas.getContext("2d");
+                        await page.render({ canvasContext: ctx, viewport })
+                            .promise;
+                        return canvas;
+                    } catch (e) {
+                        const c = document.createElement("canvas");
+                        c.width = 200;
+                        c.height = 280;
+                        const ctx = c.getContext("2d");
+                        ctx.fillStyle = "#eee";
+                        ctx.fillRect(0, 0, 200, 280);
+                        ctx.fillStyle = "#888";
+                        ctx.fillText("Page " + pageNum, 40, 140);
+                        return c;
+                    }
+                }
+
+                function showPage(canvas) {
+                    pageView.innerHTML = "";
+                    const img = document.createElement("img");
+                    img.src = canvas.toDataURL();
+                    img.className = "page-canvas";
+                    if (isPageLocked(pages[currentIdx], pages.length)) {
+                        img.style.filter = "blur(12px) brightness(0.5)";
+                        const lock = document.createElement("div");
+                        lock.style.position = "absolute";
+                        lock.style.inset = "0";
+                        lock.style.display = "flex";
+                        lock.style.alignItems = "center";
+                        lock.style.justifyContent = "center";
+                        lock.style.color = "white";
+                        lock.style.fontSize = "1.2rem";
+                        lock.style.textShadow = "0 2px 8px black";
+                        lock.innerHTML = "🔒 Donate to EkDharani<br>to unlock";
+                        pageView.appendChild(img);
+                        pageView.appendChild(lock);
+                    } else {
+                        pageView.appendChild(img);
+                    }
+                    fbIndicator.textContent = `${currentIdx + 1} / ${pages.length}`;
+                    navPrev.style.opacity = currentIdx === 0 ? "0.3" : "1";
+                    navNext.style.opacity =
+                        currentIdx >= pages.length - 1 ? "0.3" : "1";
+                }
+
+                async function goToPage(index) {
+                    if (index < 0 || index >= pages.length) return;
+                    currentIdx = index;
+                    const canvas = await renderPageCanvas(pages[currentIdx]);
+                    if (canvas) showPage(canvas);
+                }
+
+                async function animatePeel(direction) {
+                    if (isAnimating || pages.length < 2) return;
+                    const targetIdx = currentIdx + direction;
+                    if (targetIdx < 0 || targetIdx >= pages.length) return;
+                    isAnimating = true;
+
+                    const currentCanvas = await renderPageCanvas(
+                        pages[currentIdx],
+                    );
+                    const targetCanvas = await renderPageCanvas(
+                        pages[targetIdx],
+                    );
+                    if (!currentCanvas || !targetCanvas) {
+                        isAnimating = false;
+                        return;
+                    }
+
+                    // Prepare peel overlay
+                    const peelContainer = document.createElement("div");
+                    peelContainer.className = "page-peel-animation";
+                    peelContainer.style.position = "absolute";
+                    peelContainer.style.inset = "0";
+                    peelContainer.style.zIndex = "15";
+
+                    // Left half (static)
+                    const leftHalf = document.createElement("div");
+                    leftHalf.className = "peel-half peel-left";
+                    const leftImg = document.createElement("img");
+                    leftImg.src = currentCanvas.toDataURL();
+                    leftImg.style.width = "200%";
+                    leftImg.style.height = "100%";
+                    leftImg.style.objectFit = "contain";
+                    leftImg.style.objectPosition = "left center";
+                    leftHalf.appendChild(leftImg);
+
+                    // Right half (will animate)
+                    const rightHalf = document.createElement("div");
+                    rightHalf.className = "peel-half peel-right";
+                    const rightImg = document.createElement("img");
+                    rightImg.src = currentCanvas.toDataURL();
+                    rightImg.style.width = "200%";
+                    rightImg.style.height = "100%";
+                    rightImg.style.objectFit = "contain";
+                    rightImg.style.objectPosition = "left center";
+                    rightImg.style.transform = "translateX(-100%)";
+                    rightHalf.appendChild(rightImg);
+
+                    peelContainer.appendChild(leftHalf);
+                    peelContainer.appendChild(rightHalf);
+
+                    // Target page background
+                    pageView.innerHTML = "";
+                    const bgImg = document.createElement("img");
+                    bgImg.src = targetCanvas.toDataURL();
+                    bgImg.className = "page-canvas";
+                    bgImg.style.filter = isPageLocked(
+                        pages[targetIdx],
+                        pages.length,
+                    )
+                        ? "blur(12px) brightness(0.5)"
+                        : "none";
+                    pageView.appendChild(bgImg);
+                    pageView.appendChild(peelContainer);
+
+                    // Start animation
+                    requestAnimationFrame(() => {
+                        if (direction > 0) {
+                            // forward: right half rotates from 0 to -180
+                            rightHalf.style.transform = "rotateY(-180deg)";
+                        } else {
+                            // backward: right half starts rotated and goes to 0
+                            rightHalf.style.transform = "rotateY(-180deg)";
+                            requestAnimationFrame(() => {
+                                rightHalf.style.transition = `transform var(--flip-duration) cubic-bezier(0.25,0.46,0.45,0.94)`;
+                                rightHalf.style.transform = "rotateY(0deg)";
+                            });
+                            // For backward, we need the target page to be the one from which we are peeling,
+                            // but we already set bgImg as target. Actually backward animation should show the current page
+                            // being covered by the previous page's right half. That's a bit different.
+                            // Simplified: For backward, we'll treat it similar but we show the previous page as bg and peel the current page's right half back to 0? That would look odd.
+                            // Let's keep it simple: animate the right half of the target page? We'll adapt:
+                            // We'll replace bgImg with currentCanvas (the page we are leaving) and peel targetCanvas's right half from -180 to 0.
+                        }
+                    });
+
+                    const finish = () => {
+                        rightHalf.removeEventListener("transitionend", finish);
+                        peelContainer.remove();
+                        currentIdx = targetIdx;
+                        isAnimating = false;
+                        goToPage(currentIdx);
+                    };
+                    rightHalf.addEventListener("transitionend", finish);
+                    setTimeout(finish, 700);
+                }
+
+                // Simplified backward animation fix: we'll just flip backwards by swapping logic.
+                // Refined backward animation:
+                async function animatePeelBackward() {
+                    if (isAnimating || pages.length < 2 || currentIdx <= 0)
+                        return;
+                    const targetIdx = currentIdx - 1;
+                    isAnimating = true;
+
+                    const currentCanvas = await renderPageCanvas(
+                        pages[currentIdx],
+                    );
+                    const targetCanvas = await renderPageCanvas(
+                        pages[targetIdx],
+                    );
+                    if (!currentCanvas || !targetCanvas) {
+                        isAnimating = false;
+                        return;
+                    }
+
+                    // Background is the target page (previous page)
+                    pageView.innerHTML = "";
+                    const bgImg = document.createElement("img");
+                    bgImg.src = targetCanvas.toDataURL();
+                    bgImg.className = "page-canvas";
+                    pageView.appendChild(bgImg);
+
+                    // Peel overlay: use the CURRENT page's right half, initially rotated -180 (hidden), animate to 0
+                    const peelContainer = document.createElement("div");
+                    peelContainer.className = "page-peel-animation";
+                    peelContainer.style.position = "absolute";
+                    peelContainer.style.inset = "0";
+                    peelContainer.style.zIndex = "15";
+
+                    const leftHalf = document.createElement("div");
+                    leftHalf.className = "peel-half peel-left";
+                    const leftImg = document.createElement("img");
+                    leftImg.src = currentCanvas.toDataURL();
+                    leftImg.style.width = "200%";
+                    leftImg.style.height = "100%";
+                    leftImg.style.objectFit = "contain";
+                    leftImg.style.objectPosition = "left center";
+                    leftHalf.appendChild(leftImg);
+
+                    const rightHalf = document.createElement("div");
+                    rightHalf.className = "peel-half peel-right";
+                    rightHalf.style.transform = "rotateY(-180deg)";
+                    rightHalf.style.transition = "none";
+                    const rightImg = document.createElement("img");
+                    rightImg.src = currentCanvas.toDataURL();
+                    rightImg.style.width = "200%";
+                    rightImg.style.height = "100%";
+                    rightImg.style.objectFit = "contain";
+                    rightImg.style.objectPosition = "left center";
+                    rightImg.style.transform = "translateX(-100%)";
+                    rightHalf.appendChild(rightImg);
+
+                    peelContainer.appendChild(leftHalf);
+                    peelContainer.appendChild(rightHalf);
+                    pageView.appendChild(peelContainer);
+
+                    requestAnimationFrame(() => {
+                        rightHalf.style.transition = `transform var(--flip-duration) cubic-bezier(0.25,0.46,0.45,0.94)`;
+                        rightHalf.style.transform = "rotateY(0deg)";
+                    });
+
+                    const finish = () => {
+                        rightHalf.removeEventListener("transitionend", finish);
+                        peelContainer.remove();
+                        currentIdx = targetIdx;
+                        isAnimating = false;
+                        goToPage(currentIdx);
+                    };
+                    rightHalf.addEventListener("transitionend", finish);
+                    setTimeout(finish, 700);
+                }
+
+                async function flip(direction) {
+                    if (isAnimating) return;
+                    if (direction > 0) {
+                        if (currentIdx < pages.length - 1) await animatePeel(1);
+                    } else {
+                        if (currentIdx > 0) await animatePeelBackward();
+                    }
+                }
+
+                navNext.addEventListener("click", () => flip(1));
+                navPrev.addEventListener("click", () => flip(-1));
+
+                // Keyboard
+                document.addEventListener("keydown", (e) => {
+                    if (
+                        !fbModal.classList.contains("active") ||
+                        payModal.classList.contains("active")
+                    )
+                        return;
+                    if (e.key === "ArrowRight") {
+                        e.preventDefault();
+                        flip(1);
+                    } else if (e.key === "ArrowLeft") {
+                        e.preventDefault();
+                        flip(-1);
+                    }
+                });
+
+                // Touch swipe
+                let touchStartX = 0;
+                fbStage.addEventListener(
+                    "touchstart",
+                    (e) => {
+                        touchStartX = e.touches[0].clientX;
+                    },
+                    { passive: true },
+                );
+                fbStage.addEventListener("touchend", (e) => {
+                    if (isAnimating) return;
+                    const dx = e.changedTouches[0].clientX - touchStartX;
+                    if (Math.abs(dx) > 50) {
+                        if (dx < 0) flip(1);
+                        else flip(-1);
+                    }
+                });
+
+                // Click on stage halves
+                fbStage.addEventListener("click", (e) => {
+                    if (
+                        isAnimating ||
+                        e.target.closest(".floating-nav") ||
+                        e.target.closest(".page-peel-animation")
+                    )
+                        return;
+                    const rect = fbStage.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    if (x < rect.width / 2) flip(-1);
+                    else flip(1);
+                });
+
+                async function openFlipbook(pdfUrl, bookName, bookKey) {
+                    closeModal(payModal);
+                    currentBookKey = bookKey;
+                    currentBookName = bookName;
+                    pages = [];
+                    currentIdx = 0;
                     isAnimating = false;
-                    goToPage(currentIdx);
-                };
-                rightHalf.addEventListener('transitionend', finish);
-                setTimeout(finish, 700);
-            }
+                    pdfDoc = null;
+                    fbLoading.classList.remove("hidden");
+                    pageView.innerHTML = "";
+                    openModal(fbModal);
+                    try {
+                        pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
+                        const total = pdfDoc.numPages;
+                        for (let i = 1; i <= total; i++) pages.push(i);
+                        fbLoading.classList.add("hidden");
+                        goToPage(0);
+                    } catch (err) {
+                        fbLoading.innerHTML = "⚠ PDF load error";
+                        console.error(err);
+                    }
+                }
 
-            // Simplified backward animation fix: we'll just flip backwards by swapping logic.
-            // Refined backward animation:
-            async function animatePeelBackward() {
-                if (isAnimating || pages.length < 2 || currentIdx <= 0) return;
-                const targetIdx = currentIdx - 1;
-                isAnimating = true;
+                // Attach preview & thumbnails
+                document
+                    .querySelectorAll(".product-card__thumb-wrap, .preview-btn")
+                    .forEach((el) => {
+                        el.addEventListener("click", () => {
+                            const pdf = el.dataset.pdf;
+                            const book = el.dataset.book;
+                            const key = el.dataset.key;
+                            if (pdf) openFlipbook(pdf, book, key);
+                        });
+                    });
 
-                const currentCanvas = await renderPageCanvas(pages[currentIdx]);
-                const targetCanvas = await renderPageCanvas(pages[targetIdx]);
-                if (!currentCanvas || !targetCanvas) { isAnimating = false; return; }
-
-                // Background is the target page (previous page)
-                pageView.innerHTML = '';
-                const bgImg = document.createElement('img');
-                bgImg.src = targetCanvas.toDataURL();
-                bgImg.className = 'page-canvas';
-                pageView.appendChild(bgImg);
-
-                // Peel overlay: use the CURRENT page's right half, initially rotated -180 (hidden), animate to 0
-                const peelContainer = document.createElement('div');
-                peelContainer.className = 'page-peel-animation';
-                peelContainer.style.position = 'absolute'; peelContainer.style.inset = '0'; peelContainer.style.zIndex = '15';
-
-                const leftHalf = document.createElement('div');
-                leftHalf.className = 'peel-half peel-left';
-                const leftImg = document.createElement('img');
-                leftImg.src = currentCanvas.toDataURL();
-                leftImg.style.width = '200%'; leftImg.style.height = '100%'; leftImg.style.objectFit = 'contain'; leftImg.style.objectPosition = 'left center';
-                leftHalf.appendChild(leftImg);
-
-                const rightHalf = document.createElement('div');
-                rightHalf.className = 'peel-half peel-right';
-                rightHalf.style.transform = 'rotateY(-180deg)';
-                rightHalf.style.transition = 'none';
-                const rightImg = document.createElement('img');
-                rightImg.src = currentCanvas.toDataURL();
-                rightImg.style.width = '200%'; rightImg.style.height = '100%'; rightImg.style.objectFit = 'contain'; rightImg.style.objectPosition = 'left center';
-                rightImg.style.transform = 'translateX(-100%)';
-                rightHalf.appendChild(rightImg);
-
-                peelContainer.appendChild(leftHalf);
-                peelContainer.appendChild(rightHalf);
-                pageView.appendChild(peelContainer);
-
-                requestAnimationFrame(() => {
-                    rightHalf.style.transition = `transform var(--flip-duration) cubic-bezier(0.25,0.46,0.45,0.94)`;
-                    rightHalf.style.transform = 'rotateY(0deg)';
+                // Donate button -> payment modal
+                document.querySelectorAll(".donate-btn").forEach((btn) => {
+                    btn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        currentBookName = btn.dataset.book;
+                        currentBookKey = btn.dataset.key;
+                        showPayment();
+                        openModal(payModal);
+                    });
                 });
 
-                const finish = () => {
-                    rightHalf.removeEventListener('transitionend', finish);
-                    peelContainer.remove();
-                    currentIdx = targetIdx;
-                    isAnimating = false;
-                    goToPage(currentIdx);
-                };
-                rightHalf.addEventListener('transitionend', finish);
-                setTimeout(finish, 700);
-            }
-
-            async function flip(direction) {
-                if (isAnimating) return;
-                if (direction > 0) {
-                    if (currentIdx < pages.length - 1) await animatePeel(1);
-                } else {
-                    if (currentIdx > 0) await animatePeelBackward();
-                }
-            }
-
-            navNext.addEventListener('click', () => flip(1));
-            navPrev.addEventListener('click', () => flip(-1));
-
-            // Keyboard
-            document.addEventListener('keydown', e => {
-                if (!fbModal.classList.contains('active') || payModal.classList.contains('active')) return;
-                if (e.key === 'ArrowRight') { e.preventDefault(); flip(1); }
-                else if (e.key === 'ArrowLeft') { e.preventDefault(); flip(-1); }
-            });
-
-            // Touch swipe
-            let touchStartX = 0;
-            fbStage.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
-            fbStage.addEventListener('touchend', e => {
-                if (isAnimating) return;
-                const dx = e.changedTouches[0].clientX - touchStartX;
-                if (Math.abs(dx) > 50) {
-                    if (dx < 0) flip(1); else flip(-1);
-                }
-            });
-
-            // Click on stage halves
-            fbStage.addEventListener('click', e => {
-                if (isAnimating || e.target.closest('.floating-nav') || e.target.closest('.page-peel-animation')) return;
-                const rect = fbStage.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                if (x < rect.width/2) flip(-1); else flip(1);
-            });
-
-            async function openFlipbook(pdfUrl, bookName, bookKey) {
-                closeModal(payModal);
-                currentBookKey = bookKey;
-                currentBookName = bookName;
-                pages = []; currentIdx = 0; isAnimating = false; pdfDoc = null;
-                fbLoading.classList.remove('hidden');
-                pageView.innerHTML = '';
-                openModal(fbModal);
-                try {
-                    pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
-                    const total = pdfDoc.numPages;
-                    for (let i=1; i<=total; i++) pages.push(i);
-                    fbLoading.classList.add('hidden');
-                    goToPage(0);
-                } catch (err) {
-                    fbLoading.innerHTML = '⚠ PDF load error';
-                    console.error(err);
-                }
-            }
-
-            // Attach preview & thumbnails
-            document.querySelectorAll('.product-card__thumb-wrap, .preview-btn').forEach(el => {
-                el.addEventListener('click', () => {
-                    const pdf = el.dataset.pdf;
-                    const book = el.dataset.book;
-                    const key = el.dataset.key;
-                    if (pdf) openFlipbook(pdf, book, key);
-                });
-            });
-
-            // Donate button -> payment modal
-            document.querySelectorAll('.donate-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    currentBookName = btn.dataset.book;
-                    currentBookKey = btn.dataset.key;
-                    showPayment();
-                    openModal(payModal);
-                });
-            });
-
-            function showPayment() {
-                const body = document.getElementById('payment-body');
-                body.innerHTML = `
+                function showPayment() {
+                    const body = document.getElementById("payment-body");
+                    body.innerHTML = `
                     <h3>Donate to EkDharani</h3>
                     <p>Unlock <strong>${currentBookName}</strong></p>
                     <a href="upi://pay?pa=EKDHARANI.09@cmsidfc&pn=Donation&mode=02" class="btn btn-primary btn-block" style="background:#6c3cc9; margin:1rem 0;">📱 Pay via UPI</a>
@@ -843,8 +1150,8 @@
                     </div>
                     <button class="btn btn-primary btn-block" id="go-shipping">✅ I have donated</button>
                 `;
-                document.getElementById('go-shipping').onclick = () => {
-                    body.innerHTML = `
+                    document.getElementById("go-shipping").onclick = () => {
+                        body.innerHTML = `
                         <h3>Shipping Details</h3>
                         <p>For <strong>${currentBookName}</strong></p>
                         <input id="ship-name" placeholder="Full Name" style="width:100%; padding:0.7rem; margin:0.5rem 0;"><br>
@@ -852,23 +1159,35 @@
                         <input id="ship-phone" placeholder="Phone" style="width:100%; padding:0.7rem; margin:0.5rem 0;"><br>
                         <button class="btn btn-primary btn-block" id="submit-shipping">Submit & Unlock</button>
                     `;
-                    document.getElementById('submit-shipping').onclick = () => {
-                        const name = document.getElementById('ship-name').value.trim();
-                        const addr = document.getElementById('ship-addr').value.trim();
-                        const phone = document.getElementById('ship-phone').value.trim();
-                        if (!name || !addr) return toastMsg('Please fill name and address');
-                        window.open(`https://wa.me/91993006169?text=Order%20for%20${encodeURIComponent(currentBookName)}%0A${encodeURIComponent(name)}%0A${encodeURIComponent(addr)}%0A${encodeURIComponent(phone)}`);
-                        unlocked[currentBookKey] = true;
-                        saveUnlocks();
-                        closeModal(payModal);
-                        toastMsg('Unlocked! Thank you.');
-                        if (fbModal.classList.contains('active')) {
-                            goToPage(currentIdx); // refresh lock overlay
-                        }
+                        document.getElementById("submit-shipping").onclick =
+                            () => {
+                                const name = document
+                                    .getElementById("ship-name")
+                                    .value.trim();
+                                const addr = document
+                                    .getElementById("ship-addr")
+                                    .value.trim();
+                                const phone = document
+                                    .getElementById("ship-phone")
+                                    .value.trim();
+                                if (!name || !addr)
+                                    return toastMsg(
+                                        "Please fill name and address",
+                                    );
+                                window.open(
+                                    `https://wa.me/91993006169?text=Order%20for%20${encodeURIComponent(currentBookName)}%0A${encodeURIComponent(name)}%0A${encodeURIComponent(addr)}%0A${encodeURIComponent(phone)}`,
+                                );
+                                unlocked[currentBookKey] = true;
+                                saveUnlocks();
+                                closeModal(payModal);
+                                toastMsg("Unlocked! Thank you.");
+                                if (fbModal.classList.contains("active")) {
+                                    goToPage(currentIdx); // refresh lock overlay
+                                }
+                            };
                     };
-                };
-            }
-        })();
-    </script>
-</body>
+                }
+            })();
+        </script>
+    </body>
 </html>
