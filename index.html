@@ -1,275 +1,202 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+    <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Tarang Joshi — Photo Books</title>
-
-        <style>
-            /* --- RESET --- */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-                background: #fafafa;
-                color: #111;
-                line-height: 1.5;
-            }
-
-            /* --- HERO --- */
-            .hero {
-                height: 80vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                background: #ddd url("hero.jpg") center/cover no-repeat;
-            }
-            .hero h1 {
-                font-size: 2.5rem;
-                letter-spacing: 1px;
-            }
-            .hero p {
-                opacity: 0.7;
-                margin-top: 10px;
-            }
-
-            /* --- CONTAINER --- */
-            .container {
-                max-width: 1100px;
-                margin: auto;
-                padding: 20px;
-            }
-
-            /* --- GRID --- */
-            .grid {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            @media (min-width: 600px) {
-                .grid {
-                    grid-template-columns: 1fr 1fr;
-                }
-            }
-            @media (min-width: 1000px) {
-                .grid {
-                    grid-template-columns: 1fr 1fr 1fr;
-                }
-            }
-
-            /* --- CARD --- */
-            .card {
-                background: white;
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-                transition: transform 0.2s;
-            }
-            .card:hover {
-                transform: translateY(-4px);
-            }
-
-            .card img {
-                width: 100%;
-                display: block;
-            }
-
-            .card-content {
-                padding: 15px;
-            }
-
-            .card h3 {
-                margin-bottom: 5px;
-            }
-            .card p {
-                font-size: 0.9rem;
-                opacity: 0.6;
-            }
-
-            .price {
-                margin: 10px 0;
-                font-weight: bold;
-            }
-
-            /* --- BUTTONS --- */
-            .btn {
-                display: inline-block;
-                padding: 10px 14px;
-                border-radius: 8px;
-                text-decoration: none;
-                font-size: 0.9rem;
-                margin-right: 8px;
-            }
-
-            .btn-preview {
-                background: #111;
-                color: white;
-            }
-
-            .btn-order {
-                background: #25d366;
-                color: white;
-            }
-
-            /* --- MODAL --- */
-            .modal {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.9);
-                display: none;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-            }
-
-            .modal.active {
-                display: flex;
-            }
-
-            .modal-content {
-                width: 90%;
-                height: 90%;
-                background: #000;
-                position: relative;
-            }
-
-            .close {
-                position: absolute;
-                top: 10px;
-                right: 15px;
-                font-size: 28px;
-                color: white;
-                cursor: pointer;
-            }
-
-            /* --- ABOUT --- */
-            .about {
-                margin-top: 60px;
-                text-align: center;
-                max-width: 600px;
-                margin-left: auto;
-                margin-right: auto;
-                opacity: 0.7;
-            }
-
-            /* --- FOOTER --- */
-            footer {
-                text-align: center;
-                padding: 40px 20px;
-                font-size: 0.8rem;
-                opacity: 0.5;
-            }
-        </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarang Joshi — Photo Books</title>
+    
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    
+    <!-- Turn.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
+    
+    <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,sans-serif;background:#fafafa;color:#111}
+    
+    /* HERO */
+    .hero{
+    height:80vh;display:flex;align-items:center;justify-content:center;
+    background:#ddd url('hero.jpg') center/cover no-repeat;text-align:center;
+    }
+    .hero h1{font-size:2.5rem}
+    
+    /* GRID */
+    .container{max-width:1100px;margin:auto;padding:20px}
+    .grid{display:grid;gap:20px}
+    @media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+    
+    .card{
+    background:#fff;border-radius:12px;overflow:hidden;
+    box-shadow:0 4px 20px rgba(0,0,0,.05)
+    }
+    .card img{width:100%;cursor:pointer}
+    
+    .card-content{padding:15px}
+    .btn{padding:10px 14px;border-radius:8px;text-decoration:none;font-size:.9rem}
+    .btn-preview{background:#111;color:#fff}
+    .btn-order{background:#25D366;color:#fff}
+    
+    /* MODAL */
+    .modal{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.95);display:none;z-index:1000;
+    align-items:center;justify-content:center;
+    }
+    .modal.active{display:flex}
+    
+    #flipbook{
+    width:90vw;height:80vh;
+    }
+    
+    .page{
+    background:#000;display:flex;align-items:center;justify-content:center;
+    }
+    .page canvas{max-width:100%;height:auto}
+    
+    /* LOCK OVERLAY */
+    .lock{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    backdrop-filter:blur(10px);
+    background:rgba(0,0,0,.6);
+    color:#fff;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    padding:20px;
+    }
+    
+    .lock img{width:120px;margin:15px 0}
+    
+    /* CLOSE */
+    .close{
+    position:absolute;top:10px;right:20px;
+    color:#fff;font-size:28px;cursor:pointer;
+    }
+    </style>
     </head>
-
+    
     <body>
-        <!-- HERO -->
-        <section class="hero">
-            <div>
-                <h1>Tarang Joshi</h1>
-                <p>Between material and memory</p>
-            </div>
-        </section>
-
-        <!-- STORE -->
-        <div class="container">
-            <div class="grid">
-                <!-- BOOK 1 -->
-                <div class="card">
-                    <img src="tarang.joshi-2509-ungreen-scape.jpg" alt="" />
-                    <div class="card-content">
-                        <h3>Ungreen Scape</h3>
-                        <p>A study of altered landscapes</p>
-                        <div class="price">₹XXXX</div>
-
-                        <a
-                            href="#"
-                            class="btn btn-preview"
-                            onclick="
-                                openBook('tarang.joshi-2509-ungreen-scape.pdf')
-                            "
-                        >
-                            Preview
-                        </a>
-
-                        <a
-                            class="btn btn-order"
-                            href="https://wa.me/919930061691?text=I%20want%20to%20order%20Ungreen%20Scape"
-                        >
-                            Order
-                        </a>
-                    </div>
-                </div>
-
-                <!-- BOOK 2 -->
-                <div class="card">
-                    <img src="tarang.joshi-2503-between-shadows.jpg" alt="" />
-                    <div class="card-content">
-                        <h3>Between Shadows</h3>
-                        <p>Light, absence, and form</p>
-                        <div class="price">₹XXXX</div>
-
-                        <a
-                            href="#"
-                            class="btn btn-preview"
-                            onclick="
-                                openBook(
-                                    'tarang.joshi-2503-between-shadows.pdf',
-                                )
-                            "
-                        >
-                            Preview
-                        </a>
-
-                        <a
-                            class="btn btn-order"
-                            href="https://wa.me/919930061691?text=I%20want%20to%20order%20Between%20Shadows"
-                        >
-                            Order
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABOUT -->
-            <div class="about">
-                <p>
-                    These works emerge from an ongoing engagement with material,
-                    landscape, and construction through collaborations with
-                    14Trees.
-                </p>
-            </div>
-        </div>
-
-        <!-- MODAL -->
-        <div id="modal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeBook()">&times;</span>
-                <iframe id="pdfViewer" width="100%" height="100%"></iframe>
-            </div>
-        </div>
-
-        <!-- FOOTER -->
-        <footer>© Tarang Joshi</footer>
-
-        <script>
-            function openBook(pdf) {
-                document.getElementById("modal").classList.add("active");
-                document.getElementById("pdfViewer").src = pdf;
-            }
-
-            function closeBook() {
-                document.getElementById("modal").classList.remove("active");
-                document.getElementById("pdfViewer").src = "";
-            }
-        </script>
+    
+    <section class="hero">
+    <h1>Tarang Joshi</h1>
+    </section>
+    
+    <div class="container">
+    <div class="grid">
+    
+    <!-- BOOK 1 -->
+    <div class="card">
+    <img src="tarang.joshi-2509-ungreen-scape.jpg"
+    onclick="openBook('tarang.joshi-2509-ungreen-scape.pdf')">
+    
+    <div class="card-content">
+    <h3>Ungreen Scape</h3>
+    
+    <a class="btn btn-preview"
+    onclick="openBook('tarang.joshi-2509-ungreen-scape.pdf')">Preview</a>
+    
+    <a class="btn btn-order"
+    href="https://wa.me/91993006169?text=I%20want%20to%20order%20Ungreen%20Scape">
+    Order</a>
+    </div>
+    </div>
+    
+    <!-- BOOK 2 -->
+    <div class="card">
+    <img src="tarang.joshi-2503-between-shadows.jpg"
+    onclick="openBook('tarang.joshi-2503-between-shadows.pdf')">
+    
+    <div class="card-content">
+    <h3>Between Shadows</h3>
+    
+    <a class="btn btn-preview"
+    onclick="openBook('tarang.joshi-2503-between-shadows.pdf')">Preview</a>
+    
+    <a class="btn btn-order"
+    href="https://wa.me/91993006169?text=I%20want%20to%20order%20Between%20Shadows">
+    Order</a>
+    </div>
+    </div>
+    
+    </div>
+    </div>
+    
+    <!-- MODAL -->
+    <div id="modal" class="modal">
+    <span class="close" onclick="closeBook()">×</span>
+    <div id="flipbook"></div>
+    </div>
+    
+    <script>
+    const UPI_LINK = "upi://pay?pa=EKDHARANI.09@cmsidfc&pn=EkDharani&cu=INR";
+    
+    function openBook(pdfUrl){
+    document.getElementById('modal').classList.add('active');
+    loadFlipbook(pdfUrl);
+    }
+    
+    function closeBook(){
+    document.getElementById('modal').classList.remove('active');
+    document.getElementById('flipbook').innerHTML="";
+    }
+    
+    async function loadFlipbook(url){
+    const container = document.getElementById("flipbook");
+    container.innerHTML = "";
+    
+    const pdf = await pdfjsLib.getDocument(url).promise;
+    const total = pdf.numPages;
+    
+    const visiblePages = [
+    ...Array.from({length:5},(_,i)=>i+1),
+    ...Array.from({length:5},(_,i)=>total-4+i)
+    ];
+    
+    for(let i=1;i<=total;i++){
+    const pageDiv = document.createElement("div");
+    pageDiv.className="page";
+    
+    const canvas = document.createElement("canvas");
+    pageDiv.appendChild(canvas);
+    
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({scale:1.2});
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    
+    await page.render({canvasContext:canvas.getContext("2d"),viewport}).promise;
+    
+    if(!visiblePages.includes(i)){
+        const lock = document.createElement("div");
+        lock.className="lock";
+        lock.innerHTML = `
+        <h3>Donate to EkDharani to get the complete book</h3>
+        <img src="ek.dharani.UPI.png">
+        <a href="${UPI_LINK}" style="color:#0f0;margin:10px 0;">Pay via UPI</a>
+        <p style="font-size:12px;opacity:.7;margin-top:10px">
+        Account: 10059271015<br>
+        IFSC: IDFB0040101<br>
+        Bank: IDFC
+        </p>
+        `;
+        pageDiv.style.position="relative";
+        pageDiv.appendChild(lock);
+    }
+    
+    container.appendChild(pageDiv);
+    }
+    
+    // INIT TURN.JS
+    $("#flipbook").turn({
+    width:window.innerWidth*0.9,
+    height:window.innerHeight*0.8,
+    autoCenter:true
+    });
+    }
+    </script>
+    
+    <!-- jQuery required for Turn.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
     </body>
-</html>
+    </html>
