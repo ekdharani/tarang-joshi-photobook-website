@@ -1,202 +1,1145 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarang Joshi — Photo Books</title>
-    
-    <!-- PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    
-    <!-- Turn.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
-    
-    <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:-apple-system,sans-serif;background:#fafafa;color:#111}
-    
-    /* HERO */
-    .hero{
-    height:80vh;display:flex;align-items:center;justify-content:center;
-    background:#ddd url('hero.jpg') center/cover no-repeat;text-align:center;
-    }
-    .hero h1{font-size:2.5rem}
-    
-    /* GRID */
-    .container{max-width:1100px;margin:auto;padding:20px}
-    .grid{display:grid;gap:20px}
-    @media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
-    
-    .card{
-    background:#fff;border-radius:12px;overflow:hidden;
-    box-shadow:0 4px 20px rgba(0,0,0,.05)
-    }
-    .card img{width:100%;cursor:pointer}
-    
-    .card-content{padding:15px}
-    .btn{padding:10px 14px;border-radius:8px;text-decoration:none;font-size:.9rem}
-    .btn-preview{background:#111;color:#fff}
-    .btn-order{background:#25D366;color:#fff}
-    
-    /* MODAL */
-    .modal{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,.95);display:none;z-index:1000;
-    align-items:center;justify-content:center;
-    }
-    .modal.active{display:flex}
-    
-    #flipbook{
-    width:90vw;height:80vh;
-    }
-    
-    .page{
-    background:#000;display:flex;align-items:center;justify-content:center;
-    }
-    .page canvas{max-width:100%;height:auto}
-    
-    /* LOCK OVERLAY */
-    .lock{
-    position:absolute;top:0;left:0;width:100%;height:100%;
-    backdrop-filter:blur(10px);
-    background:rgba(0,0,0,.6);
-    color:#fff;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;text-align:center;
-    padding:20px;
-    }
-    
-    .lock img{width:120px;margin:15px 0}
-    
-    /* CLOSE */
-    .close{
-    position:absolute;top:10px;right:20px;
-    color:#fff;font-size:28px;cursor:pointer;
-    }
-    </style>
-    </head>
-    
-    <body>
-    
-    <section class="hero">
-    <h1>Tarang Joshi</h1>
-    </section>
-    
-    <div class="container">
-    <div class="grid">
-    
-    <!-- BOOK 1 -->
-    <div class="card">
-    <img src="tarang.joshi-2509-ungreen-scape.jpg"
-    onclick="openBook('tarang.joshi-2509-ungreen-scape.pdf')">
-    
-    <div class="card-content">
-    <h3>Ungreen Scape</h3>
-    
-    <a class="btn btn-preview"
-    onclick="openBook('tarang.joshi-2509-ungreen-scape.pdf')">Preview</a>
-    
-    <a class="btn btn-order"
-    href="https://wa.me/91993006169?text=I%20want%20to%20order%20Ungreen%20Scape">
-    Order</a>
-    </div>
-    </div>
-    
-    <!-- BOOK 2 -->
-    <div class="card">
-    <img src="tarang.joshi-2503-between-shadows.jpg"
-    onclick="openBook('tarang.joshi-2503-between-shadows.pdf')">
-    
-    <div class="card-content">
-    <h3>Between Shadows</h3>
-    
-    <a class="btn btn-preview"
-    onclick="openBook('tarang.joshi-2503-between-shadows.pdf')">Preview</a>
-    
-    <a class="btn btn-order"
-    href="https://wa.me/91993006169?text=I%20want%20to%20order%20Between%20Shadows">
-    Order</a>
-    </div>
-    </div>
-    
-    </div>
-    </div>
-    
-    <!-- MODAL -->
-    <div id="modal" class="modal">
-    <span class="close" onclick="closeBook()">×</span>
-    <div id="flipbook"></div>
-    </div>
-    
-    <script>
-    const UPI_LINK = "upi://pay?pa=EKDHARANI.09@cmsidfc&pn=EkDharani&cu=INR";
-    
-    function openBook(pdfUrl){
-    document.getElementById('modal').classList.add('active');
-    loadFlipbook(pdfUrl);
-    }
-    
-    function closeBook(){
-    document.getElementById('modal').classList.remove('active');
-    document.getElementById('flipbook').innerHTML="";
-    }
-    
-    async function loadFlipbook(url){
-    const container = document.getElementById("flipbook");
-    container.innerHTML = "";
-    
-    const pdf = await pdfjsLib.getDocument(url).promise;
-    const total = pdf.numPages;
-    
-    const visiblePages = [
-    ...Array.from({length:5},(_,i)=>i+1),
-    ...Array.from({length:5},(_,i)=>total-4+i)
-    ];
-    
-    for(let i=1;i<=total;i++){
-    const pageDiv = document.createElement("div");
-    pageDiv.className="page";
-    
-    const canvas = document.createElement("canvas");
-    pageDiv.appendChild(canvas);
-    
-    const page = await pdf.getPage(i);
-    const viewport = page.getViewport({scale:1.2});
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-    
-    await page.render({canvasContext:canvas.getContext("2d"),viewport}).promise;
-    
-    if(!visiblePages.includes(i)){
-        const lock = document.createElement("div");
-        lock.className="lock";
-        lock.innerHTML = `
-        <h3>Donate to EkDharani to get the complete book</h3>
-        <img src="ek.dharani.UPI.png">
-        <a href="${UPI_LINK}" style="color:#0f0;margin:10px 0;">Pay via UPI</a>
-        <p style="font-size:12px;opacity:.7;margin-top:10px">
-        Account: 10059271015<br>
-        IFSC: IDFB0040101<br>
-        Bank: IDFC
-        </p>
-        `;
-        pageDiv.style.position="relative";
-        pageDiv.appendChild(lock);
-    }
-    
-    container.appendChild(pageDiv);
-    }
-    
-    // INIT TURN.JS
-    $("#flipbook").turn({
-    width:window.innerWidth*0.9,
-    height:window.innerHeight*0.8,
-    autoCenter:true
-    });
-    }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="description" content="Tarang Joshi — Photo Books created with 14Trees. Ungreen Scape & Between Shadows.">
+    <title>Tarang Joshi · Photo Books</title>
+
+    <!-- PDF.js from CDN (only external dependency) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
     </script>
-    
-    <!-- jQuery required for Turn.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    
-    </body>
-    </html>
+
+    <style>
+        :root {
+            --bg: #fafaf8;
+            --surface: #ffffff;
+            --text: #1a1a1a;
+            --text-secondary: #555555;
+            --text-muted: #888888;
+            --accent: #1a1a1a;
+            --accent-hover: #333333;
+            --border: #e5e5e0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.15);
+            --radius-sm: 6px;
+            --radius: 10px;
+            --radius-lg: 16px;
+            --font-serif: 'Georgia', 'Times New Roman', 'Noto Serif', serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+            --transition-fast: 0.18s ease-out;
+            --transition-smooth: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            --transition-cinematic: 0.55s cubic-bezier(0.16, 0.84, 0.44, 1);
+            --max-width: 1100px;
+            --flipbook-perspective: 1800px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0d0d0c;
+                --surface: #181817;
+                --text: #e8e8e6;
+                --text-secondary: #b0b0ad;
+                --text-muted: #777775;
+                --accent: #e8e8e6;
+                --accent-hover: #ffffff;
+                --border: #2a2a27;
+                --shadow-sm: 0 1px 3px rgba(0,0,0,0.25);
+                --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+                --shadow-lg: 0 12px 40px rgba(0,0,0,0.45);
+            }
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background var(--transition-smooth), color var(--transition-smooth);
+            overflow-x: hidden;
+        }
+
+        h1,h2,h3,h4 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+        h1 {font-size: clamp(1.6rem, 4vw, 2.6rem);}
+        h2 {font-size: clamp(1.25rem, 3vw, 1.8rem);}
+        h3 {font-size: clamp(1rem, 2.2vw, 1.3rem);}
+        p {font-size: 0.95rem; color: var(--text-secondary);}
+        .text-muted {color: var(--text-muted); font-size: 0.85rem;}
+
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 clamp(12px, 3vw, 28px);
+        }
+
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 55vh;
+            min-height: 55dvh;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(160deg, #1c1c1a 0%, #2a2a26 30%, #3a3a34 60%, #1c1c1a 100%);
+            overflow: hidden;
+            padding: 2rem 1rem 3rem;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 650px;
+        }
+        .hero-content h1 {
+            color: #f0f0eb;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            margin-bottom: 0.5rem;
+        }
+        .hero-content .subtitle {
+            color: #c5c5be;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 300;
+            font-family: var(--font-serif);
+            font-style: italic;
+        }
+        .hero-content .byline {
+            color: #999990;
+            font-size: 0.85rem;
+            margin-top: 0.6rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .hero-placeholder {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            opacity: 0.25;
+            background:
+                radial-gradient(circle at 30% 40%, rgba(180,170,150,0.5) 0%, transparent 50%),
+                radial-gradient(circle at 70% 55%, rgba(160,150,130,0.35) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(200,190,170,0.3) 0%, transparent 45%);
+            filter: blur(3px);
+        }
+
+        .section {
+            padding: 2.5rem 0;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .section-header h2 {margin-bottom: 0.3rem;}
+        .section-header .section-rule {
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: var(--border);
+            margin: 0.8rem auto 0;
+            border-radius: 1px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+            gap: clamp(16px, 3vw, 28px);
+            align-items: start;
+        }
+        .product-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .product-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+            border-color: #ccc;
+        }
+        @media (prefers-color-scheme: dark) {.product-card:hover {border-color: #444;}}
+        .product-card__thumb-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            background: #e8e8e3;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        @media (prefers-color-scheme: dark) {.product-card__thumb-wrap {background: #20201e;}}
+        .product-card__thumb-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform var(--transition-cinematic);
+            will-change: transform;
+        }
+        .product-card__thumb-wrap:hover img {transform: scale(1.04);}
+        .product-card__thumb-wrap .thumb-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.0);
+            transition: background var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .product-card__thumb-wrap:hover .thumb-overlay {background: rgba(0,0,0,0.18);}
+        .thumb-overlay-icon {
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+            color: #fff;
+            font-size: 2.2rem;
+            pointer-events: none;
+        }
+        .product-card__thumb-wrap:hover .thumb-overlay-icon {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .product-card__body {
+            padding: 1.1rem 1.2rem 1.3rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 0.5rem;
+        }
+        .product-card__body h3 {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            margin: 0;
+        }
+        .product-card__body .book-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .product-card__body p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            flex-grow: 1;
+            margin: 0;
+        }
+        .product-card__actions {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 0.4rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.1rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            border-radius: 50px;
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: var(--font-sans);
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border-color: var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            background: rgba(0,0,0,0.03);
+        }
+        @media (prefers-color-scheme: dark) {
+            .btn-outline:hover {background: rgba(255,255,255,0.04);}
+            .btn-primary {background: #e8e8e6; color: #1a1a1a; border-color: #e8e8e6;}
+            .btn-primary:hover {background: #fff; border-color: #fff;}
+        }
+        .btn-whatsapp {
+            background: #25D366;
+            color: #fff;
+            border-color: #25D366;
+        }
+        .btn-whatsapp:hover {
+            background: #1fb855;
+            border-color: #1fb855;
+            box-shadow: 0 2px 10px rgba(37,211,102,0.3);
+        }
+        .btn-donate {
+            background: #b88a3a;
+            color: #fff;
+            border-color: #b88a3a;
+        }
+        .btn-donate:hover {
+            background: #9e7230;
+            border-color: #9e7230;
+        }
+        .btn-sm {
+            padding: 0.45rem 0.85rem;
+            font-size: 0.8rem;
+            border-radius: 40px;
+        }
+
+        .placeholder-section {
+            background: var(--surface);
+            border: 1.5px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            transition: all var(--transition-smooth);
+        }
+        .placeholder-section h3 {color: var(--text-secondary); margin-bottom: 0.4rem;}
+        .placeholder-section .icon-placeholder {font-size: 2.5rem; display: block; margin-bottom: 0.6rem; opacity: 0.5;}
+
+        .site-footer {
+            margin-top: auto;
+            padding: 1.8rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .site-footer a {color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px;}
+
+        /* ── MODALS ── */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-cinematic);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+            padding: 12px;
+        }
+        .modal-backdrop.active {opacity: 1; pointer-events: auto;}
+        .modal-panel {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            max-height: 90dvh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(25px) scale(0.96);
+            transition: transform var(--transition-cinematic);
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-backdrop.active .modal-panel {transform: translateY(0) scale(1);}
+        .modal-panel.flipbook-panel {
+            max-width: 95vw;
+            max-width: 95dvw;
+            width: 100%;
+            max-height: 94vh;
+            max-height: 94dvh;
+            border-radius: var(--radius);
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            z-index: 20;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .modal-close:hover {background: rgba(0,0,0,0.75); transform: scale(1.08);}
+        .modal-body {padding: 1.5rem;}
+        .modal-body h3 {margin-bottom: 0.8rem;}
+        .modal-body .detail-row {display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: baseline; margin-bottom: 0.55rem; font-size: 0.9rem;}
+        .modal-body .detail-label {font-weight: 600; min-width: 80px; color: var(--text);}
+        .modal-body .detail-value {color: var(--text-secondary); word-break: break-all;}
+        .qr-img {width: 160px; height: 160px; border-radius: var(--radius-sm); border: 1px solid var(--border); object-fit: contain; background: #fff; display: block; margin: 0.8rem 0;}
+        .btn-block {width: 100%; justify-content: center; padding: 0.75rem 1.2rem; font-size: 0.95rem; margin-top: 0.4rem;}
+        .btn-upi {background: #6c3cc9; color: #fff; border-color: #6c3cc9; font-weight: 600;}
+        .btn-upi:hover {background: #5a2fb8; border-color: #5a2fb8; box-shadow: 0 3px 14px rgba(108,60,201,0.35);}
+        .divider-text {display: flex; align-items: center; gap: 0.6rem; color: var(--text-muted); font-size: 0.8rem; margin: 1rem 0;}
+        .divider-text::before, .divider-text::after {content: ''; flex: 1; height: 1px; background: var(--border);}
+
+        /* ── FLIPBOOK ── */
+        .flipbook-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: #1a1a18;
+            border-radius: var(--radius);
+            overflow: hidden;
+            min-height: 350px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .flipbook-stage {
+            perspective: var(--flipbook-perspective);
+            -webkit-perspective: var(--flipbook-perspective);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+            flex-grow: 1;
+            min-height: 380px;
+        }
+        .flipbook-spread {display: flex; position: relative; transform-style: preserve-3d; -webkit-transform-style: preserve-3d;}
+        .flipbook-page-wrapper {
+            position: relative;
+            transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d;
+            flex-shrink: 0;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            border-radius: 2px 4px 4px 2px;
+            overflow: hidden;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .flipbook-page-wrapper.flipping {transition: transform 0.55s cubic-bezier(0.22,0.61,0.36,1); z-index: 10;}
+        .flipbook-page-wrapper .page-front, .flipbook-page-wrapper .page-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+        }
+        .flipbook-page-wrapper .page-back {transform: rotateY(180deg); -webkit-transform: rotateY(180deg);}
+        .flipbook-page-wrapper canvas {width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none;}
+        .flipbook-page-wrapper .page-lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            color: #fff;
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 1rem;
+            z-index: 5;
+            pointer-events: auto;
+            transition: opacity 0.25s;
+        }
+        .flipbook-page-wrapper .page-lock-overlay .lock-text {text-shadow: 0 2px 8px rgba(0,0,0,0.6);}
+        .flipbook-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            padding: 10px 16px;
+            background: #111;
+            color: #ccc;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .flipbook-nav button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 50px;
+            padding: 0.45rem 1rem;
+            cursor: pointer;
+            font-size: 0.82rem;
+            transition: all var(--transition-fast);
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
+        }
+        .flipbook-nav button:hover {background: rgba(255,255,255,0.2);}
+        .flipbook-nav button:disabled {opacity: 0.3; pointer-events: none;}
+        .flipbook-nav .page-indicator {font-variant-numeric: tabular-nums; font-family: var(--font-sans); min-width: 60px; text-align: center;}
+        .flipbook-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(26,26,24,0.9);
+            z-index: 5;
+            color: #ccc;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .flipbook-loading.hidden {opacity: 0; pointer-events: none;}
+
+        /* ── Shipping Form ── */
+        .shipping-form {display: flex; flex-direction: column; gap: 0.8rem;}
+        .shipping-form input, .shipping-form textarea {
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+        .shipping-form textarea {resize: vertical; min-height: 60px;}
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .flipbook-stage {min-height: 280px; padding: 8px;}
+            .flipbook-container {min-height: 280px;}
+            .flipbook-nav {gap: 8px; padding: 8px 10px; font-size: 0.78rem;}
+            .flipbook-nav button {padding: 0.35rem 0.7rem; font-size: 0.75rem;}
+            .modal-panel.flipbook-panel {max-width: 98vw; max-width: 98dvw; border-radius: var(--radius-sm);}
+            .modal-close {top: 6px; right: 8px; width: 30px; height: 30px; font-size: 1rem;}
+        }
+        @media (max-width: 380px) {
+            .flipbook-stage {min-height: 220px; padding: 4px;}
+            .flipbook-container {min-height: 220px;}
+            .flipbook-nav {gap: 4px; padding: 6px;}
+            .flipbook-nav button {padding: 0.3rem 0.55rem; font-size: 0.7rem;}
+            .product-grid {grid-template-columns: 1fr; gap: 14px;}
+        }
+        @media (min-width: 1400px) {
+            .flipbook-stage {min-height: 520px;}
+            .flipbook-container {min-height: 520px;}
+            .modal-panel.flipbook-panel {max-width: 75vw; max-width: 75dvw;}
+        }
+        @media (max-width: 240px) {
+            .flipbook-stage {min-height: 150px;}
+            .flipbook-container {min-height: 150px;}
+            .flipbook-nav button {padding: 0.2rem 0.4rem; font-size: 0.6rem;}
+            .btn {padding: 0.35rem 0.6rem; font-size: 0.7rem;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <header class="hero">
+        <div class="hero-placeholder" aria-hidden="true"></div>
+        <div class="hero-content">
+            <h1>Tarang Joshi</h1>
+            <p class="subtitle">Photo Books · created with 14Trees</p>
+            <p class="byline">Ungreen Scape &amp; Between Shadows</p>
+        </div>
+    </header>
+
+    <!-- ═══════════ PRODUCTS ═══════════ -->
+    <main class="container section" id="store">
+        <div class="section-header">
+            <h2>The Books</h2>
+            <span class="section-rule"></span>
+            <p class="text-muted" style="margin-top:0.4rem;">Physical photo books — preview gated, unlock with a donation to EkDharani</p>
+        </div>
+
+        <div class="product-grid">
+            <!-- Book 1 -->
+            <article class="product-card" data-book="ungreen-scape">
+                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book-name="Ungreen Scape" aria-label="Preview Ungreen Scape">
+                    <img src="tarang.joshi-2509-ungreen-scape.jpg" alt="Ungreen Scape cover" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#3a4a3a,#5a6a4a)';">
+                    <div class="thumb-overlay"><span class="thumb-overlay-icon">📖</span></div>
+                </div>
+                <div class="product-card__body">
+                    <span class="book-subtitle">Book 1</span>
+                    <h3>Ungreen Scape</h3>
+                    <p>Exploring the tension between the natural and the constructed — a meditation on landscapes that resist easy categorization.</p>
+                    <div class="product-card__actions">
+                        <button class="btn btn-outline btn-sm preview-trigger" data-pdf="tarang.joshi-2509-ungreen-scape.pdf" data-book-name="Ungreen Scape">Preview</button>
+                        <a class="btn btn-whatsapp btn-sm" href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20your%20photo%20book%20*Ungreen%20Scape*.%20Please%20share%20details." target="_blank" rel="noopener">Order via WhatsApp</a>
+                        <button class="btn btn-donate btn-sm donate-trigger" data-book-name="Ungreen Scape" data-book-key="ungreen-scape">Donate to Buy</button>
+                    </div>
+                </div>
+            </article>
+            <!-- Book 2 -->
+            <article class="product-card" data-book="between-shadows">
+                <div class="product-card__thumb-wrap" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book-name="Between Shadows" aria-label="Preview Between Shadows">
+                    <img src="tarang.joshi-2503-between-shadows.jpg" alt="Between Shadows cover" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#2a2a3a,#3a3a4a)';">
+                    <div class="thumb-overlay"><span class="thumb-overlay-icon">📖</span></div>
+                </div>
+                <div class="product-card__body">
+                    <span class="book-subtitle">Book 2</span>
+                    <h3>Between Shadows</h3>
+                    <p>Where light falters and form dissolves — a visual journey through the liminal spaces between presence and absence.</p>
+                    <div class="product-card__actions">
+                        <button class="btn btn-outline btn-sm preview-trigger" data-pdf="tarang.joshi-2503-between-shadows.pdf" data-book-name="Between Shadows">Preview</button>
+                        <a class="btn btn-whatsapp btn-sm" href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20your%20photo%20book%20*Between%20Shadows*.%20Please%20share%20details." target="_blank" rel="noopener">Order via WhatsApp</a>
+                        <button class="btn btn-donate btn-sm donate-trigger" data-book-name="Between Shadows" data-book-key="between-shadows">Donate to Buy</button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- ═══════════ VIDEO PLACEHOLDER ═══════════ -->
+    <section class="container section" id="video">
+        <div class="section-header"><h2>Video</h2><span class="section-rule"></span></div>
+        <div class="placeholder-section"><span class="icon-placeholder">🎬</span><h3>Coming Soon</h3><p>A short film exploring the stories behind the photographs.</p></div>
+    </section>
+
+    <!-- ═══════════ STORIES PLACEHOLDER ═══════════ -->
+    <section class="container section" id="stories">
+        <div class="section-header"><h2>Stories</h2><span class="section-rule"></span></div>
+        <div class="placeholder-section"><span class="icon-placeholder">📝</span><h3>Blog · Coming Soon</h3><p>Behind-the-scenes narratives, field notes, and reflections.</p></div>
+    </section>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Tarang Joshi · Photos created with <a href="#">14Trees</a> · All rights reserved.</p>
+            <p style="margin-top:0.3rem;">Support <strong>EkDharani</strong> — every donation helps sustain the work.</p>
+        </div>
+    </footer>
+
+    <!-- ═══════════ FLIPBOOK MODAL ═══════════ -->
+    <div class="modal-backdrop" id="flipbook-modal" aria-hidden="true">
+        <div class="modal-panel flipbook-panel" role="dialog" aria-modal="true" aria-label="Flipbook Preview">
+            <button class="modal-close" id="flipbook-close" aria-label="Close flipbook">&times;</button>
+            <div class="flipbook-container" id="flipbook-container">
+                <div class="flipbook-loading" id="flipbook-loading">Loading PDF…</div>
+                <div class="flipbook-stage" id="flipbook-stage"></div>
+                <nav class="flipbook-nav">
+                    <button id="fb-prev" aria-label="Previous page">← Prev</button>
+                    <span class="page-indicator" id="fb-indicator">1 / 10</span>
+                    <button id="fb-next" aria-label="Next page">Next →</button>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ PAYMENT MODAL ═══════════ -->
+    <div class="modal-backdrop" id="payment-modal" aria-hidden="true">
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Payment Options">
+            <button class="modal-close" id="payment-close" aria-label="Close payment">&times;</button>
+            <div class="modal-body" id="payment-body">
+                <!-- dynamically filled: initial content or shipping form -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ TOAST ═══════════ -->
+    <div class="toast" id="toast" aria-live="polite"></div>
+
+    <script>
+        (function() {
+            // Set PDF.js worker
+            if (typeof pdfjsLib !== 'undefined') {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+
+            // DOM refs
+            const flipbookModal = document.getElementById('flipbook-modal');
+            const flipbookClose = document.getElementById('flipbook-close');
+            const flipbookStage = document.getElementById('flipbook-stage');
+            const flipbookLoading = document.getElementById('flipbook-loading');
+            const fbPrev = document.getElementById('fb-prev');
+            const fbNext = document.getElementById('fb-next');
+            const fbIndicator = document.getElementById('fb-indicator');
+            const paymentModal = document.getElementById('payment-modal');
+            const paymentClose = document.getElementById('payment-close');
+            const paymentBody = document.getElementById('payment-body');
+            const toast = document.getElementById('toast');
+            const upiLink = document.getElementById('upi-link'); // will be recreated
+
+            // State
+            let currentPdfUrl = null;
+            let currentBookKey = null;
+            let currentBookName = null;
+            let pdfDoc = null;
+            let allPages = []; // array of page numbers 1..N
+            let currentPageIndex = 0;
+            let isFlipping = false;
+            let unlockedBooks = {};
+            let renderedCanvases = {};
+            const PREVIEW_FIRST_N = 5;
+            const PREVIEW_LAST_N = 5;
+
+            // localStorage
+            try {
+                const stored = localStorage.getItem('ekdharani_unlocked_books');
+                if (stored) unlockedBooks = JSON.parse(stored);
+            } catch (e) {}
+
+            function saveUnlockedBooks() {
+                try { localStorage.setItem('ekdharani_unlocked_books', JSON.stringify(unlockedBooks)); } catch (e) {}
+            }
+
+            // Toast
+            let toastTimer;
+            function showToast(msg) {
+                clearTimeout(toastTimer);
+                toast.textContent = msg;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+            }
+
+            // Modal helpers
+            function openModal(modal) {
+                modal.setAttribute('aria-hidden', 'false');
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeModal(modal) {
+                modal.setAttribute('aria-hidden', 'true');
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            flipbookClose.addEventListener('click', () => closeModal(flipbookModal));
+            paymentClose.addEventListener('click', () => {
+                closeModal(paymentModal);
+                // reset payment body to initial state
+                renderPaymentInitial();
+            });
+            flipbookModal.addEventListener('click', e => { if (e.target === flipbookModal) closeModal(flipbookModal); });
+            paymentModal.addEventListener('click', e => { if (e.target === paymentModal) closeModal(paymentModal); });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (paymentModal.classList.contains('active')) closeModal(paymentModal);
+                    else if (flipbookModal.classList.contains('active')) closeModal(flipbookModal);
+                }
+            });
+
+            // ── Payment modal content ──
+            function renderPaymentInitial() {
+                paymentBody.innerHTML = `
+                    <h3>Donate to EkDharani</h3>
+                    <p style="margin-bottom:1rem;">Your donation helps unlock the complete book. Choose any method below.</p>
+                    <a id="upi-link" href="upi://pay?pa=EKDHARANI.09@cmsidfc&pn=Donation%20to%20EkDharani&mode=02&am=" class="btn btn-upi btn-block" target="_blank" rel="noopener">📱 Tap to Pay via UPI</a>
+                    <p class="text-muted" style="text-align:center;margin-top:0.3rem;">Opens your UPI app instantly</p>
+                    <div class="divider-text">or scan QR</div>
+                    <div style="text-align:center;">
+                        <img src="ek.dharani.UPI.png" alt="EkDharani UPI QR Code" class="qr-img" loading="lazy" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<p class=text-muted style=text-align:center;>QR image not available — use UPI link or bank details.</p>');">
+                        <p class="text-muted">Scan this QR with any UPI app</p>
+                    </div>
+                    <div class="divider-text">bank details</div>
+                    <div style="background:var(--bg);border-radius:var(--radius-sm);padding:1rem;border:1px solid var(--border);">
+                        <div class="detail-row"><span class="detail-label">Account:</span><span class="detail-value">10059271015</span></div>
+                        <div class="detail-row"><span class="detail-label">IFSC:</span><span class="detail-value">IDFB0040101</span></div>
+                        <div class="detail-row"><span class="detail-label">Bank:</span><span class="detail-value">IDFC</span></div>
+                        <div class="detail-row"><span class="detail-label">Beneficiary:</span><span class="detail-value">EkDharani</span></div>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="donated-confirm-btn" style="margin-top:1.2rem;">✅ I have donated — Proceed</button>
+                    <p class="text-muted" style="text-align:center;margin-top:0.4rem;">After your donation completes, click above to provide shipping details.</p>
+                `;
+                // attach event to new button
+                document.getElementById('donated-confirm-btn')?.addEventListener('click', showShippingForm);
+                // UPI mobile detection
+                const upiBtn = document.getElementById('upi-link');
+                if (upiBtn) {
+                    upiBtn.addEventListener('click', function(e) {
+                        if (!isMobileDevice()) {
+                            e.preventDefault();
+                            const qrImg = paymentBody.querySelector('.qr-img');
+                            if (qrImg) qrImg.scrollIntoView({ behavior: 'smooth' });
+                            showToast('On desktop, please scan the QR code or use bank details');
+                        }
+                    });
+                }
+            }
+
+            function showShippingForm() {
+                if (!currentBookName) return;
+                paymentBody.innerHTML = `
+                    <h3>Shipping Details</h3>
+                    <p class="text-muted">We'll courier <strong>${currentBookName}</strong> to you.</p>
+                    <form class="shipping-form" id="shipping-form">
+                        <input type="text" id="cust-name" placeholder="Full Name" required>
+                        <textarea id="cust-address" placeholder="Full Address (with pincode)" required></textarea>
+                        <input type="tel" id="cust-phone" placeholder="Phone Number (optional)">
+                        <button type="submit" class="btn btn-primary btn-block">Submit Order & Unlock</button>
+                    </form>
+                    <p class="text-muted" style="text-align:center;margin-top:0.5rem;">We'll send your details via WhatsApp to confirm.</p>
+                `;
+                document.getElementById('shipping-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const name = document.getElementById('cust-name').value.trim();
+                    const address = document.getElementById('cust-address').value.trim();
+                    const phone = document.getElementById('cust-phone').value.trim();
+                    if (!name || !address) return showToast('Please fill name and address.');
+                    const msg = `Hi Tarang, I've donated to EkDharani and would like to receive *${currentBookName}*.%0A%0AName: ${encodeURIComponent(name)}%0AAddress: ${encodeURIComponent(address)}%0APhone: ${encodeURIComponent(phone || 'Not provided')}%0A%0APlease confirm.`;
+                    window.open(`https://wa.me/91993006169?text=${msg}`, '_blank');
+                    // Unlock the book
+                    if (currentBookKey) {
+                        unlockedBooks[currentBookKey] = true;
+                        saveUnlockedBooks();
+                    }
+                    closeModal(paymentModal);
+                    showToast('🎉 Book unlocked! Order details sent via WhatsApp.');
+                    // Reload flipbook if open
+                    if (flipbookModal.classList.contains('active') && currentPdfUrl) {
+                        loadFlipbookPDF(currentPdfUrl, currentBookKey);
+                    }
+                });
+            }
+
+            function isMobileDevice() {
+                return /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || ('ontouchstart' in window && window.innerWidth < 1024);
+            }
+
+            // ── Flipbook logic ──
+            async function loadFlipbookPDF(pdfUrl, bookKey) {
+                currentPdfUrl = pdfUrl;
+                currentBookKey = bookKey;
+                allPages = [];
+                currentPageIndex = 0;
+                renderedCanvases = {};
+                pdfDoc = null;
+                flipbookStage.innerHTML = '';
+                flipbookLoading.classList.remove('hidden');
+                flipbookLoading.innerHTML = 'Loading PDF…';
+                fbPrev.disabled = true;
+                fbNext.disabled = true;
+                fbIndicator.textContent = '…';
+
+                const isUnlocked = !!unlockedBooks[bookKey];
+                try {
+                    if (typeof pdfjsLib === 'undefined') throw new Error('PDF.js not loaded.');
+                    const loadingTask = pdfjsLib.getDocument(pdfUrl);
+                    pdfDoc = await loadingTask.promise;
+                    const totalPages = pdfDoc.numPages;
+                    for (let i = 1; i <= totalPages; i++) allPages.push(i);
+
+                    flipbookLoading.classList.add('hidden');
+                    if (allPages.length === 0) {
+                        showToast('PDF has no pages.');
+                        return;
+                    }
+                    fbPrev.disabled = true;
+                    fbNext.disabled = allPages.length <= 1;
+                    updateIndicator();
+                    await renderCurrentSpread();
+                } catch (err) {
+                    console.error(err);
+                    flipbookLoading.innerHTML = '<span style="color:#e88;">⚠ Failed to load PDF.</span><br><small style="color:#aaa;">' + err.message + '</small>';
+                    flipbookLoading.classList.remove('hidden');
+                    showToast('Failed to load PDF.');
+                }
+            }
+
+            function updateIndicator() {
+                if (allPages.length === 0) { fbIndicator.textContent = '0 / 0'; return; }
+                fbIndicator.textContent = (currentPageIndex + 1) + ' / ' + allPages.length;
+            }
+
+            function isPageLocked(pageNum) {
+                if (!currentBookKey || unlockedBooks[currentBookKey]) return false;
+                const total = allPages.length;
+                if (total <= PREVIEW_FIRST_N + PREVIEW_LAST_N) return false; // all visible
+                const inFirst = pageNum <= PREVIEW_FIRST_N;
+                const inLast = pageNum > total - PREVIEW_LAST_N;
+                return !(inFirst || inLast);
+            }
+
+            async function renderPageToCanvas(pageNum) {
+                if (!pdfDoc) return null;
+                const cacheKey = 'p' + pageNum;
+                if (renderedCanvases[cacheKey]) return renderedCanvases[cacheKey].cloneNode(true);
+                try {
+                    const page = await pdfDoc.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 1.0 });
+                    const stageWidth = flipbookStage.clientWidth || 400;
+                    const stageHeight = flipbookStage.clientHeight || 500;
+                    const isWide = stageWidth >= 600;
+                    const maxWidth = isWide ? (stageWidth * 0.45) : (stageWidth * 0.85);
+                    const maxHeight = stageHeight * 0.85;
+                    const scaleW = maxWidth / viewport.width;
+                    const scaleH = maxHeight / viewport.height;
+                    const scale = Math.min(scaleW, scaleH, 2.5);
+                    const scaledViewport = page.getViewport({ scale });
+                    const canvas = document.createElement('canvas');
+                    canvas.width = scaledViewport.width;
+                    canvas.height = scaledViewport.height;
+                    const ctx = canvas.getContext('2d');
+                    await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
+                    renderedCanvases[cacheKey] = canvas.cloneNode(true);
+                    return canvas;
+                } catch (err) {
+                    console.warn('Render error page', pageNum, err);
+                    const fallback = document.createElement('canvas');
+                    fallback.width = 200; fallback.height = 280;
+                    const fctx = fallback.getContext('2d');
+                    fctx.fillStyle = '#e0e0dc'; fctx.fillRect(0,0,200,280);
+                    fctx.fillStyle = '#999'; fctx.font = '14px sans-serif'; fctx.textAlign = 'center';
+                    fctx.fillText('Page ' + pageNum, 100, 140);
+                    return fallback;
+                }
+            }
+
+            async function renderCurrentSpread() {
+                if (allPages.length === 0 || !pdfDoc) return;
+                flipbookStage.innerHTML = '';
+                const pageNum = allPages[currentPageIndex];
+                const canvas = await renderPageToCanvas(pageNum);
+                if (!canvas) return;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flipbook-page-wrapper';
+                wrapper.style.width = canvas.width + 'px';
+                wrapper.style.height = canvas.height + 'px';
+                wrapper.setAttribute('data-page-num', pageNum);
+
+                const front = document.createElement('div');
+                front.className = 'page-front';
+                front.appendChild(canvas);
+
+                const back = document.createElement('div');
+                back.className = 'page-back';
+
+                const nextIdx = currentPageIndex + 1;
+                if (nextIdx < allPages.length) {
+                    const nextCanvas = await renderPageToCanvas(allPages[nextIdx]);
+                    if (nextCanvas) back.appendChild(nextCanvas);
+                }
+                wrapper.appendChild(front);
+                wrapper.appendChild(back);
+
+                // Add lock overlay if page is locked
+                if (isPageLocked(pageNum)) {
+                    const lockDiv = document.createElement('div');
+                    lockDiv.className = 'page-lock-overlay';
+                    lockDiv.innerHTML = '<span class="lock-text">🔒 Donate to EkDharani<br>to unlock this page</span>';
+                    wrapper.appendChild(lockDiv);
+                }
+
+                flipbookStage.appendChild(wrapper);
+
+                fbPrev.disabled = currentPageIndex === 0;
+                fbNext.disabled = currentPageIndex >= allPages.length - 1;
+                updateIndicator();
+                preloadAdjacent();
+            }
+
+            async function preloadAdjacent() {
+                const toPreload = [];
+                const prev = currentPageIndex - 1;
+                const next = currentPageIndex + 1;
+                const next2 = currentPageIndex + 2;
+                if (prev >= 0) toPreload.push(allPages[prev]);
+                if (next < allPages.length) toPreload.push(allPages[next]);
+                if (next2 < allPages.length) toPreload.push(allPages[next2]);
+                for (const pn of toPreload) {
+                    if (!renderedCanvases['p' + pn]) {
+                        try { await renderPageToCanvas(pn); } catch (e) {}
+                    }
+                }
+            }
+
+            async function flipPage(direction) {
+                if (isFlipping || !pdfDoc || allPages.length === 0) return;
+                const targetIndex = currentPageIndex + direction;
+                if (targetIndex < 0 || targetIndex >= allPages.length) return;
+
+                isFlipping = true;
+                const wrapper = flipbookStage.querySelector('.flipbook-page-wrapper');
+                if (!wrapper) { isFlipping = false; return; }
+
+                const back = wrapper.querySelector('.page-back');
+                if (back) {
+                    back.innerHTML = '';
+                    const targetCanvas = await renderPageToCanvas(allPages[targetIndex]);
+                    if (targetCanvas) back.appendChild(targetCanvas);
+                }
+
+                wrapper.style.transformOrigin = direction > 0 ? 'left center' : 'right center';
+                wrapper.style.webkitTransformOrigin = direction > 0 ? 'left center' : 'right center';
+                wrapper.classList.add('flipping');
+                const rotateDeg = direction > 0 ? -180 : 180;
+                wrapper.style.transform = 'rotateY(' + rotateDeg + 'deg)';
+                wrapper.style.webkitTransform = 'rotateY(' + rotateDeg + 'deg)';
+
+                const onTransitionEnd = () => {
+                    wrapper.removeEventListener('transitionend', onTransitionEnd);
+                    wrapper.classList.remove('flipping');
+                    wrapper.style.transform = '';
+                    wrapper.style.webkitTransform = '';
+                    currentPageIndex = targetIndex;
+                    isFlipping = false;
+                    renderCurrentSpread();
+                };
+                wrapper.addEventListener('transitionend', onTransitionEnd);
+                setTimeout(() => {
+                    if (isFlipping && currentPageIndex !== targetIndex) onTransitionEnd();
+                }, 700);
+
+                fbPrev.disabled = true;
+                fbNext.disabled = true;
+            }
+
+            fbNext.addEventListener('click', () => flipPage(1));
+            fbPrev.addEventListener('click', () => flipPage(-1));
+
+            document.addEventListener('keydown', e => {
+                if (!flipbookModal.classList.contains('active') || paymentModal.classList.contains('active')) return;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); flipPage(1); }
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); flipPage(-1); }
+            });
+
+            let touchStartX = 0, touchStartY = 0;
+            flipbookStage.addEventListener('touchstart', e => {
+                if (e.touches.length === 1) { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; }
+            }, { passive: true });
+            flipbookStage.addEventListener('touchend', e => {
+                if (isFlipping) return;
+                const dx = (e.changedTouches[0]?.clientX || touchStartX) - touchStartX;
+                const dy = (e.changedTouches[0]?.clientY || touchStartY) - touchStartY;
+                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+                    if (dx < -30) flipPage(1); else if (dx > 30) flipPage(-1);
+                }
+            });
+            flipbookStage.addEventListener('click', e => {
+                if (isFlipping || e.target.closest('.page-lock-overlay')) return;
+                const rect = flipbookStage.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                if (x < rect.width/2) flipPage(-1); else flipPage(1);
+            });
+            flipbookStage.addEventListener('wheel', e => {
+                if (!flipbookModal.classList.contains('active') || paymentModal.classList.contains('active') || isFlipping) return;
+                e.preventDefault();
+                if (e.deltaY > 20 || e.deltaX > 20) flipPage(1);
+                else if (e.deltaY < -20 || e.deltaX < -20) flipPage(-1);
+            }, { passive: false });
+
+            function openFlipbook(pdfUrl, bookName, bookKey) {
+                closeModal(paymentModal);
+                openModal(flipbookModal);
+                currentBookName = bookName;
+                currentBookKey = bookKey;
+                flipbookStage.innerHTML = '';
+                flipbookLoading.classList.remove('hidden');
+                flipbookLoading.innerHTML = 'Loading PDF…';
+                fbPrev.disabled = true;
+                fbNext.disabled = true;
+                fbIndicator.textContent = '…';
+                allPages = []; currentPageIndex = 0; renderedCanvases = {}; isFlipping = false;
+                loadFlipbookPDF(pdfUrl, bookKey);
+            }
+
+            // Attach to product cards
+            document.querySelectorAll('.product-card__thumb-wrap').forEach(thumb => {
+                thumb.addEventListener('click', function() {
+                    const pdfUrl = this.getAttribute('data-pdf');
+                    const bookName = this.getAttribute('data-book-name');
+                    const bookKey = (bookName || pdfUrl).replace(/[^a-z0-9]/gi, '-').toLowerCase();
+                    if (pdfUrl) openFlipbook(pdfUrl, bookName, bookKey);
+                });
+            });
+            document.querySelectorAll('.preview-trigger').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const pdfUrl = this.getAttribute('data-pdf');
+                    const bookName = this.getAttribute('data-book-name');
+                    const bookKey = (bookName || pdfUrl).replace(/[^a-z0-9]/gi, '-').toLowerCase();
+                    if (pdfUrl) openFlipbook(pdfUrl, bookName, bookKey);
+                });
+            });
+
+            // Donate to Buy buttons
+            document.querySelectorAll('.donate-trigger').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const bookName = this.getAttribute('data-book-name');
+                    const bookKey = this.getAttribute('data-book-key');
+                    currentBookName = bookName;
+                    currentBookKey = bookKey;
+                    renderPaymentInitial();
+                    openModal(paymentModal);
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                clearTimeout(window._resizeDebounce);
+                window._resizeDebounce = setTimeout(() => {
+                    if (flipbookModal.classList.contains('active') && pdfDoc && allPages.length > 0) {
+                        renderedCanvases = {};
+                        renderCurrentSpread();
+                    }
+                }, 400);
+            });
+
+            renderPaymentInitial(); // pre-build initial payment content
+
+            console.log('%c🌿 Tarang Joshi Store %cready', 'font-size:1.2em;color:#4a6a4a;', 'color:#888;');
+            console.log('📖 Flipbook with per‑page locking | 💳 UPI: EKDHARANI.09@cmsidfc');
+        })();
+    </script>
+</body>
+</html>
