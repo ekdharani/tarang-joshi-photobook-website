@@ -86,6 +86,7 @@
                     background var(--transition-smooth),
                     color var(--transition-smooth);
                 overflow-x: hidden;
+                padding-top: 70px; /* offset for fixed header */
             }
 
             h1,
@@ -118,7 +119,126 @@
                 padding: 0 clamp(12px, 3vw, 28px);
             }
 
-            /* Hero */
+            /* ---------- SITE HEADER / NAVIGATION ---------- */
+            .site-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 900;
+                background: var(--surface);
+                border-bottom: 1px solid var(--border);
+                backdrop-filter: blur(10px);
+                transition: background 0.3s;
+            }
+            .header-inner {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 70px;
+                padding: 0 clamp(12px, 3vw, 28px);
+                max-width: 1100px;
+                margin: 0 auto;
+            }
+            .site-logo {
+                font-family: var(--font-serif);
+                font-size: 1.4rem;
+                font-weight: 400;
+                color: var(--text);
+                text-decoration: none;
+                letter-spacing: -0.01em;
+            }
+            .nav-links {
+                display: flex;
+                gap: 1.8rem;
+                list-style: none;
+                align-items: center;
+            }
+            .nav-links a {
+                text-decoration: none;
+                color: var(--text-secondary);
+                font-weight: 500;
+                font-size: 0.95rem;
+                transition: color 0.2s;
+                cursor: pointer;
+            }
+            .nav-links a.active,
+            .nav-links a:hover {
+                color: var(--accent);
+            }
+            .menu-toggle {
+                display: none;
+                background: none;
+                border: none;
+                font-size: 1.6rem;
+                color: var(--text);
+                cursor: pointer;
+                width: 44px;
+                height: 44px;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+            }
+            @media (max-width: 768px) {
+                .nav-links {
+                    position: absolute;
+                    top: 70px;
+                    left: 0;
+                    width: 100%;
+                    background: var(--surface);
+                    flex-direction: column;
+                    gap: 1.2rem;
+                    padding: 1.5rem 2rem;
+                    border-bottom: 1px solid var(--border);
+                    transform: translateY(-120%);
+                    opacity: 0;
+                    transition:
+                        transform 0.3s,
+                        opacity 0.3s;
+                    pointer-events: none;
+                    z-index: 899;
+                }
+                .nav-links.open {
+                    transform: translateY(0);
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+                .menu-toggle {
+                    display: flex;
+                }
+            }
+
+            /* ---------- PAGE SECTIONS ---------- */
+            .page-section {
+                display: none;
+                flex-grow: 1;
+            }
+            .page-section.active {
+                display: block;
+            }
+
+            /* ---------- HOME / ABOUT ---------- */
+            .about-hero {
+                background: linear-gradient(160deg, #1c1c1a, #2a2a26);
+                padding: 3rem 1rem;
+                text-align: center;
+                color: #f0f0eb;
+            }
+            .about-hero h1 {
+                color: #f0f0eb;
+                margin-bottom: 0.5rem;
+            }
+            .about-content {
+                padding: 2.5rem 0;
+            }
+            .about-content p {
+                max-width: 720px;
+                margin: 0 auto 1.2rem;
+                font-size: 1rem;
+                line-height: 1.7;
+            }
+
+            /* ---------- BOOKS (existing) ---------- */
             .hero {
                 position: relative;
                 width: 100%;
@@ -178,6 +298,7 @@
                 transition: all 0.35s;
                 display: flex;
                 flex-direction: column;
+                padding: clamp(0.6rem, 2vw, 1rem);
             }
             .product-card:hover {
                 box-shadow: var(--shadow-md);
@@ -189,18 +310,20 @@
                 overflow: hidden;
                 cursor: pointer;
                 background: #e8e8e3;
+                border-radius: 12px;
             }
             .product-card__thumb-wrap img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 transition: transform 0.55s;
+                display: block;
             }
             .product-card__thumb-wrap:hover img {
                 transform: scale(1.04);
             }
             .product-card__body {
-                padding: 1.1rem 1.2rem 1.3rem;
+                padding: 1rem 0 0.4rem;
                 display: flex;
                 flex-direction: column;
                 gap: 0.5rem;
@@ -266,6 +389,25 @@
                 gap: 0.6rem;
                 flex-wrap: wrap;
                 margin-top: 0.4rem;
+            }
+
+            /* ---------- CONTACT ---------- */
+            .contact-section {
+                padding: 3rem 0;
+                text-align: center;
+            }
+            .contact-card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-lg);
+                padding: 2rem;
+                max-width: 500px;
+                margin: 2rem auto;
+                box-shadow: var(--shadow-sm);
+                display: flex;
+                flex-direction: column;
+                gap: 1.2rem;
+                align-items: center;
             }
 
             /* MODALS */
@@ -524,139 +666,238 @@
     </script>
 
     <body>
-        <header class="hero">
-            <div class="hero-placeholder"></div>
-            <div class="hero-content">
-                <h1>Tarang Joshi</h1>
-                <p class="subtitle">Photo Books · created with 14Trees</p>
-                <p
-                    class="byline"
-                    style="
-                        color: #999;
-                        text-transform: uppercase;
-                        letter-spacing: 0.05em;
-                    "
+        <!-- SITE HEADER -->
+        <header class="site-header">
+            <div class="header-inner">
+                <a href="#" class="site-logo" data-page="home"
+                    >Tarang Joshi</a
                 >
-                    Ungreen Scape & Between Shadows
-                </p>
+                <button
+                    class="menu-toggle"
+                    aria-label="Toggle menu"
+                    id="menu-toggle"
+                >
+                    &#9776;
+                </button>
+                <nav>
+                    <ul class="nav-links" id="nav-links">
+                        <li>
+                            <a data-page="home" class="active">Home / About</a>
+                        </li>
+                        <li><a data-page="books">Get My Books</a></li>
+                        <li><a data-page="contact">Contact Me</a></li>
+                    </ul>
+                </nav>
             </div>
         </header>
 
-        <main class="container section">
-            <div style="text-align: center; margin-bottom: 2rem">
-                <h2>The Books</h2>
-                <p class="text-muted">
-                    Physical photo books — preview gated, unlock with a donation
+        <!-- HOME / ABOUT SECTION -->
+        <section id="home" class="page-section active">
+            <div class="about-hero">
+                <h1>Tarang Joshi</h1>
+                <p style="color: #c5c5be; font-style: italic; font-family: var(--font-serif)">
+                    Photographer · Visual Storyteller
                 </p>
             </div>
-            <div class="product-grid">
-                <!-- Book 1 -->
-                <article class="product-card">
-                    <div
-                        class="product-card__thumb-wrap"
-                        data-pdf="tarang.joshi-2509-ungreen-scape.pdf"
-                        data-book="Ungreen Scape"
-                        data-key="ungreen-scape"
-                    >
-                        <img
-                            src="tarang.joshi-2509-ungreen-scape.jpg"
-                            alt="Ungreen Scape"
-                            loading="lazy"
-                            onerror="
-                                this.style.display = 'none';
-                                this.parentElement.style.background = '#3a4a3a';
-                            "
-                        />
-                    </div>
-                    <div class="product-card__body">
-                        <h3>Ungreen Scape</h3>
-                        <p>
-                            Exploring the tension between the natural and the
-                            constructed.
-                        </p>
-                        <div class="product-card__actions">
-                            <button
-                                class="btn btn-outline btn-sm preview-btn"
-                                data-pdf="tarang.joshi-2509-ungreen-scape.pdf"
-                                data-book="Ungreen Scape"
-                                data-key="ungreen-scape"
-                            >
-                                Preview
-                            </button>
-                            <a
-                                class="btn btn-whatsapp btn-sm"
-                                href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Ungreen%20Scape*.%20Please%20share%20details."
-                                target="_blank"
-                                >WhatsApp</a
-                            >
-                            <button
-                                class="btn btn-donate btn-sm donate-btn"
-                                data-book="Ungreen Scape"
-                                data-key="ungreen-scape"
-                            >
-                                Donate to Buy
-                            </button>
-                        </div>
-                    </div>
-                </article>
-                <!-- Book 2 -->
-                <article class="product-card">
-                    <div
-                        class="product-card__thumb-wrap"
-                        data-pdf="tarang.joshi-2503-between-shadows.pdf"
-                        data-book="Between Shadows"
-                        data-key="between-shadows"
-                    >
-                        <img
-                            src="tarang.joshi-2503-between-shadows.jpg"
-                            alt="Between Shadows"
-                            loading="lazy"
-                            onerror="
-                                this.style.display = 'none';
-                                this.parentElement.style.background = '#2a2a3a';
-                            "
-                        />
-                    </div>
-                    <div class="product-card__body">
-                        <h3>Between Shadows</h3>
-                        <p>
-                            Where light falters and form dissolves — a visual
-                            journey.
-                        </p>
-                        <div class="product-card__actions">
-                            <button
-                                class="btn btn-outline btn-sm preview-btn"
-                                data-pdf="tarang.joshi-2503-between-shadows.pdf"
-                                data-book="Between Shadows"
-                                data-key="between-shadows"
-                            >
-                                Preview
-                            </button>
-                            <a
-                                class="btn btn-whatsapp btn-sm"
-                                href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Between%20Shadows*.%20Please%20share%20details."
-                                target="_blank"
-                                >WhatsApp</a
-                            >
-                            <button
-                                class="btn btn-donate btn-sm donate-btn"
-                                data-book="Between Shadows"
-                                data-key="between-shadows"
-                            >
-                                Donate to Buy
-                            </button>
-                        </div>
-                    </div>
-                </article>
+            <div class="container about-content">
+                <p>
+                    Tarang Joshi is a visual artist and documentary
+                    photographer whose work explores the delicate tension
+                    between the natural world and human intervention. His
+                    photographic practice is rooted in long‑form observation,
+                    capturing landscapes that hover between stillness and
+                    transformation.
+                </p>
+                <p>
+                    His photo books <em>Ungreen Scape</em> and
+                    <em>Between Shadows</em> — published under the imprint
+                    14Trees — are physical artifacts of that vision, merging
+                    fine‑art printing with immersive storytelling. Each book
+                    invites the viewer to step into a quiet, contemplative
+                    space where light, form, and texture speak louder than
+                    words.
+                </p>
+                <p>
+                    Beyond his personal work, Tarang is the founder of
+                    <strong>EkDharani</strong>, a community‑driven initiative
+                    that channels proceeds from book sales into social causes.
+                    He believes that art can be a gentle but powerful force
+                    for change.
+                </p>
+                <p style="text-align:center; margin-top:1.5rem;">
+                    <a class="btn btn-outline btn-sm" data-page="books" style="cursor:pointer;">Browse the books →</a>
+                </p>
             </div>
-        </main>
+        </section>
 
+        <!-- BOOKS SECTION (original content) -->
+        <section id="books" class="page-section">
+            <div class="hero">
+                <div class="hero-placeholder"></div>
+                <div class="hero-content">
+                    <h1>Tarang Joshi</h1>
+                    <p class="subtitle">Photo Books · created with 14Trees</p>
+                    <p
+                        class="byline"
+                        style="
+                            color: #999;
+                            text-transform: uppercase;
+                            letter-spacing: 0.05em;
+                        "
+                    >
+                        Ungreen Scape & Between Shadows
+                    </p>
+                </div>
+            </div>
+
+            <main class="container section">
+                <div style="text-align: center; margin-bottom: 2rem">
+                    <h2>The Books</h2>
+                    <p class="text-muted">
+                        Physical photo books — preview gated, unlock with a donation
+                    </p>
+                </div>
+                <div class="product-grid">
+                    <!-- Book 1 -->
+                    <article class="product-card">
+                        <div
+                            class="product-card__thumb-wrap"
+                            data-pdf="tarang.joshi-2509-ungreen-scape.pdf"
+                            data-book="Ungreen Scape"
+                            data-key="ungreen-scape"
+                        >
+                            <img
+                                src="tarang.joshi-2509-ungreen-scape.jpg"
+                                alt="Ungreen Scape"
+                                loading="lazy"
+                                onerror="
+                                    this.style.display = 'none';
+                                    this.parentElement.style.background = '#3a4a3a';
+                                "
+                            />
+                        </div>
+                        <div class="product-card__body">
+                            <h3>Ungreen Scape</h3>
+                            <p>
+                                Exploring the tension between the natural and the
+                                constructed.
+                            </p>
+                            <div class="product-card__actions">
+                                <button
+                                    class="btn btn-outline btn-sm preview-btn"
+                                    data-pdf="tarang.joshi-2509-ungreen-scape.pdf"
+                                    data-book="Ungreen Scape"
+                                    data-key="ungreen-scape"
+                                >
+                                    Preview
+                                </button>
+                                <a
+                                    class="btn btn-whatsapp btn-sm"
+                                    href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Ungreen%20Scape*.%20Please%20share%20details."
+                                    target="_blank"
+                                    >WhatsApp</a
+                                >
+                                <button
+                                    class="btn btn-donate btn-sm donate-btn"
+                                    data-book="Ungreen Scape"
+                                    data-key="ungreen-scape"
+                                >
+                                    Donate to Buy
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Book 2 -->
+                    <article class="product-card">
+                        <div
+                            class="product-card__thumb-wrap"
+                            data-pdf="tarang.joshi-2503-between-shadows.pdf"
+                            data-book="Between Shadows"
+                            data-key="between-shadows"
+                        >
+                            <img
+                                src="tarang.joshi-2503-between-shadows.jpg"
+                                alt="Between Shadows"
+                                loading="lazy"
+                                onerror="
+                                    this.style.display = 'none';
+                                    this.parentElement.style.background = '#2a2a3a';
+                                "
+                            />
+                        </div>
+                        <div class="product-card__body">
+                            <h3>Between Shadows</h3>
+                            <p>
+                                Where light falters and form dissolves — a visual
+                                journey.
+                            </p>
+                            <div class="product-card__actions">
+                                <button
+                                    class="btn btn-outline btn-sm preview-btn"
+                                    data-pdf="tarang.joshi-2503-between-shadows.pdf"
+                                    data-book="Between Shadows"
+                                    data-key="between-shadows"
+                                >
+                                    Preview
+                                </button>
+                                <a
+                                    class="btn btn-whatsapp btn-sm"
+                                    href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I'm%20interested%20in%20buying%20*Between%20Shadows*.%20Please%20share%20details."
+                                    target="_blank"
+                                    >WhatsApp</a
+                                >
+                                <button
+                                    class="btn btn-donate btn-sm donate-btn"
+                                    data-book="Between Shadows"
+                                    data-key="between-shadows"
+                                >
+                                    Donate to Buy
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </main>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="page-section">
+            <div class="container contact-section">
+                <h2>Contact Me</h2>
+                <p style="margin-bottom: 1rem;">
+                    I’d love to hear from you. Reach out directly via WhatsApp
+                    or send an email.
+                </p>
+                <div class="contact-card">
+                    <a
+                        class="btn btn-whatsapp"
+                        href="https://wa.me/91993006169?text=Hi%20Tarang%2C%20I%20visited%20your%20website."
+                        target="_blank"
+                    >
+                        💬 Chat on WhatsApp
+                    </a>
+                    <button
+                        class="btn btn-outline"
+                        id="email-btn"
+                        style="font-size:0.95rem;"
+                    >
+                        ✉️ Send Email
+                    </button>
+                    <p style="font-size:0.8rem; color: var(--text-muted);">
+                        (email address hidden to prevent spam)
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER (always visible) -->
         <footer
             style="
                 text-align: center;
                 padding: 2rem 0;
                 border-top: 1px solid var(--border);
                 color: var(--text-muted);
+                margin-top: auto;
             "
         >
             <p>© 2025 Tarang Joshi · Support EkDharani</p>
@@ -714,6 +955,68 @@
 
         <script>
             (function () {
+                // ---------- PAGE NAVIGATION ----------
+                const sections = {
+                    home: document.getElementById("home"),
+                    books: document.getElementById("books"),
+                    contact: document.getElementById("contact"),
+                };
+                const navLinks = document.querySelectorAll(".nav-links a");
+                const menuToggle = document.getElementById("menu-toggle");
+                const navContainer = document.getElementById("nav-links");
+                const siteLogo = document.querySelector(".site-logo");
+
+                function switchPage(pageId) {
+                    // Hide all sections
+                    Object.values(sections).forEach(
+                        (sec) => sec && sec.classList.remove("active"),
+                    );
+                    // Show target
+                    if (sections[pageId]) {
+                        sections[pageId].classList.add("active");
+                    }
+                    // Update active nav link
+                    navLinks.forEach((link) => {
+                        const linkPage = link.getAttribute("data-page");
+                        if (linkPage === pageId) {
+                            link.classList.add("active");
+                        } else {
+                            link.classList.remove("active");
+                        }
+                    });
+                    // Close mobile menu if open
+                    navContainer.classList.remove("open");
+                    // Scroll top
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+
+                // Click event on nav links (including logo and any element with data-page)
+                document.addEventListener("click", (e) => {
+                    const pageTrigger = e.target.closest("[data-page]");
+                    if (!pageTrigger) return;
+                    const pageId = pageTrigger.getAttribute("data-page");
+                    if (pageId && sections[pageId]) {
+                        e.preventDefault();
+                        switchPage(pageId);
+                    }
+                });
+
+                // Hamburger toggle
+                menuToggle.addEventListener("click", () => {
+                    navContainer.classList.toggle("open");
+                });
+
+                // Close menu when clicking outside (optional)
+                document.addEventListener("click", (e) => {
+                    if (
+                        !e.target.closest(".site-header") &&
+                        navContainer.classList.contains("open")
+                    ) {
+                        navContainer.classList.remove("open");
+                    }
+                });
+
+                // ---------- PDF / FLIPBOOK / PAYMENT (unchanged) ----------
                 if (typeof pdfjsLib !== "undefined") {
                     pdfjsLib.GlobalWorkerOptions.workerSrc =
                         "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -739,7 +1042,6 @@
                 const FIRST = 5,
                     LAST = 5;
 
-                // Load unlock state
                 try {
                     unlocked = JSON.parse(
                         localStorage.getItem("ekdharani_unlocked") || "{}",
@@ -763,7 +1065,6 @@
                     );
                 }
 
-                // Modal controls
                 function openModal(m) {
                     m.classList.add("active");
                     document.body.style.overflow = "hidden";
@@ -875,14 +1176,12 @@
                         return;
                     }
 
-                    // Prepare peel overlay
                     const peelContainer = document.createElement("div");
                     peelContainer.className = "page-peel-animation";
                     peelContainer.style.position = "absolute";
                     peelContainer.style.inset = "0";
                     peelContainer.style.zIndex = "15";
 
-                    // Left half (static)
                     const leftHalf = document.createElement("div");
                     leftHalf.className = "peel-half peel-left";
                     const leftImg = document.createElement("img");
@@ -893,7 +1192,6 @@
                     leftImg.style.objectPosition = "left center";
                     leftHalf.appendChild(leftImg);
 
-                    // Right half (will animate)
                     const rightHalf = document.createElement("div");
                     rightHalf.className = "peel-half peel-right";
                     const rightImg = document.createElement("img");
@@ -908,7 +1206,6 @@
                     peelContainer.appendChild(leftHalf);
                     peelContainer.appendChild(rightHalf);
 
-                    // Target page background
                     pageView.innerHTML = "";
                     const bgImg = document.createElement("img");
                     bgImg.src = targetCanvas.toDataURL();
@@ -922,24 +1219,15 @@
                     pageView.appendChild(bgImg);
                     pageView.appendChild(peelContainer);
 
-                    // Start animation
                     requestAnimationFrame(() => {
                         if (direction > 0) {
-                            // forward: right half rotates from 0 to -180
                             rightHalf.style.transform = "rotateY(-180deg)";
                         } else {
-                            // backward: right half starts rotated and goes to 0
                             rightHalf.style.transform = "rotateY(-180deg)";
                             requestAnimationFrame(() => {
                                 rightHalf.style.transition = `transform var(--flip-duration) cubic-bezier(0.25,0.46,0.45,0.94)`;
                                 rightHalf.style.transform = "rotateY(0deg)";
                             });
-                            // For backward, we need the target page to be the one from which we are peeling,
-                            // but we already set bgImg as target. Actually backward animation should show the current page
-                            // being covered by the previous page's right half. That's a bit different.
-                            // Simplified: For backward, we'll treat it similar but we show the previous page as bg and peel the current page's right half back to 0? That would look odd.
-                            // Let's keep it simple: animate the right half of the target page? We'll adapt:
-                            // We'll replace bgImg with currentCanvas (the page we are leaving) and peel targetCanvas's right half from -180 to 0.
                         }
                     });
 
@@ -954,8 +1242,6 @@
                     setTimeout(finish, 700);
                 }
 
-                // Simplified backward animation fix: we'll just flip backwards by swapping logic.
-                // Refined backward animation:
                 async function animatePeelBackward() {
                     if (isAnimating || pages.length < 2 || currentIdx <= 0)
                         return;
@@ -973,14 +1259,12 @@
                         return;
                     }
 
-                    // Background is the target page (previous page)
                     pageView.innerHTML = "";
                     const bgImg = document.createElement("img");
                     bgImg.src = targetCanvas.toDataURL();
                     bgImg.className = "page-canvas";
                     pageView.appendChild(bgImg);
 
-                    // Peel overlay: use the CURRENT page's right half, initially rotated -180 (hidden), animate to 0
                     const peelContainer = document.createElement("div");
                     peelContainer.className = "page-peel-animation";
                     peelContainer.style.position = "absolute";
@@ -1042,7 +1326,6 @@
                 navNext.addEventListener("click", () => flip(1));
                 navPrev.addEventListener("click", () => flip(-1));
 
-                // Keyboard
                 document.addEventListener("keydown", (e) => {
                     if (
                         !fbModal.classList.contains("active") ||
@@ -1058,7 +1341,6 @@
                     }
                 });
 
-                // Touch swipe
                 let touchStartX = 0;
                 fbStage.addEventListener(
                     "touchstart",
@@ -1076,7 +1358,6 @@
                     }
                 });
 
-                // Click on stage halves
                 fbStage.addEventListener("click", (e) => {
                     if (
                         isAnimating ||
@@ -1113,7 +1394,6 @@
                     }
                 }
 
-                // Attach preview & thumbnails
                 document
                     .querySelectorAll(".product-card__thumb-wrap, .preview-btn")
                     .forEach((el) => {
@@ -1125,7 +1405,6 @@
                         });
                     });
 
-                // Donate button -> payment modal
                 document.querySelectorAll(".donate-btn").forEach((btn) => {
                     btn.addEventListener("click", (e) => {
                         e.stopPropagation();
@@ -1182,11 +1461,19 @@
                                 closeModal(payModal);
                                 toastMsg("Unlocked! Thank you.");
                                 if (fbModal.classList.contains("active")) {
-                                    goToPage(currentIdx); // refresh lock overlay
+                                    goToPage(currentIdx);
                                 }
                             };
                     };
                 }
+
+                // ---------- EMAIL OBFUSCATION ----------
+                document.getElementById("email-btn").addEventListener("click", () => {
+                    const user = "tarang";
+                    const domain = "joshi";
+                    const tld = "com";
+                    window.location.href = `mailto:${user}.${domain}@gmail.${tld}?subject=Hello%20Tarang`;
+                });
             })();
         </script>
     </body>
